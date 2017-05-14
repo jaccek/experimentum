@@ -18,23 +18,8 @@ namespace e {
 
         mMainWidget->setLayout(mMainWidgetLayout);
         setCentralWidget(mMainWidget);
-    }
 
-    void MainWindow::closeEvent(QCloseEvent *event) {
-        delete mModesManager;
-        mModesManager = nullptr;
-    }
-
-    void MainWindow::changeMode() {
-        QAction *action = (QAction*) sender();
-
-        deleteCurrentMode();
-        createWidgetForMode();
-
-        QString modeName = action->objectName();
-        printf("Creating mode %s\n", modeName.toUtf8().constData());
-        auto modeInfo = findModeInfoOrThrowException(modeName);
-        createMode(modeInfo);
+        changeMode(mModesManager->modes()[0]);
     }
 
     void MainWindow::initMenuBar() {
@@ -51,10 +36,30 @@ namespace e {
     		auto modeInfo = modeInfos[i];
     		QAction *action = new QAction(modeInfo->modeName(), modeMenu);
             action->setObjectName(modeInfo->modeName());
-            connect(action, &QAction::triggered, this, &MainWindow::changeMode);
+            connect(action, &QAction::triggered, this, &MainWindow::onModeSelected);
     		modeMenu->addAction(action);
     	}
         setMenuBar(menuBar);
+    }
+
+    void MainWindow::closeEvent(QCloseEvent *event) {
+        delete mModesManager;
+        mModesManager = nullptr;
+    }
+
+    void MainWindow::onModeSelected() {
+        QAction *action = (QAction*) sender();
+
+        QString modeName = action->objectName();
+        printf("Creating mode %s\n", modeName.toUtf8().constData());
+        auto modeInfo = findModeInfoOrThrowException(modeName);
+        changeMode(modeInfo);
+    }
+
+    void MainWindow::changeMode(mapi::ModeInfo *modeInfo) {
+        deleteCurrentMode();
+        createWidgetForMode();
+        createMode(modeInfo);
     }
 
     void MainWindow::deleteCurrentMode() {

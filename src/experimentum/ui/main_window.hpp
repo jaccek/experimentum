@@ -20,11 +20,12 @@ namespace e
         virtual void closeEvent(QCloseEvent *event);
 
     private slots:
-        void changeMode();
+        void onModeSelected();
 
     private:
         void initMenuBar();
 
+        void changeMode(mapi::ModeInfo *modeInfo);
         void deleteCurrentMode();
         void createWidgetForMode();
         mapi::ModeInfo* findModeInfoOrThrowException(QString &modeName);
