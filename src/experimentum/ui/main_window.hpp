@@ -1,7 +1,7 @@
 #pragma once
 
 #include "mode/modes_manager.hpp"
-#include <mode.hpp>
+#include <mapi/mode.hpp>
 #include <QMainWindow>
 #include <QLayout>
 

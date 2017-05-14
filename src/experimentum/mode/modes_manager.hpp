@@ -1,6 +1,6 @@
 #pragma once
 
-#include <mode_info.hpp>
+#include <mapi/mode_info.hpp>
 #include <vector>
 
 namespace e {

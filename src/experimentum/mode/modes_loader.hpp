@@ -3,7 +3,7 @@
 #include <vector>
 #include <dirent.h>
 
-#include <mode_info.hpp>
+#include <mapi/mode_info.hpp>
 
 namespace e {
 class ModesLoader {
