@@ -81,8 +81,6 @@ namespace e {
     mapi::ModeInfo* MainWindow::findModeInfoOrThrowException(QString &modeName) {
         for (auto modeInfo : mModesManager->modes()) {
             if (modeName.compare(modeInfo->modeName()) == 0) {
-                // mMode = modeInfo->createMode();
-                // break;
                 return modeInfo;
             }
         }
