@@ -31,14 +31,10 @@ namespace e {
         deleteCurrentMode();
         createWidgetForMode();
 
-        // TODO: find mode info, create mode and init it
-
-        // FIXME temp
-        mMode = mModesManager->modes()[0]->createMode();
-        mMode->init(mModeWidget);
-        // end temp
-
-        mModeWidget->update();
+        QString modeName = action->objectName();
+        printf("Creating mode %s\n", modeName.toUtf8().constData());
+        auto modeInfo = findModeInfoOrThrowException(modeName);
+        createMode(modeInfo);
     }
 
     void MainWindow::initMenuBar() {
@@ -54,6 +50,7 @@ namespace e {
     	for(unsigned i = 0; i < modeInfos.size(); ++i) {
     		auto modeInfo = modeInfos[i];
     		QAction *action = new QAction(modeInfo->modeName(), modeMenu);
+            action->setObjectName(modeInfo->modeName());
             connect(action, &QAction::triggered, this, &MainWindow::changeMode);
     		modeMenu->addAction(action);
     	}
@@ -79,5 +76,29 @@ namespace e {
 
         mMainWidgetLayout->addWidget(mModeWidget);
         mMainWidget->update();
+    }
+
+    mapi::ModeInfo* MainWindow::findModeInfoOrThrowException(QString &modeName) {
+        for (auto modeInfo : mModesManager->modes()) {
+            if (modeName.compare(modeInfo->modeName()) == 0) {
+                // mMode = modeInfo->createMode();
+                // break;
+                return modeInfo;
+            }
+        }
+
+        printf("Cannot find mode %s\n", modeName.toUtf8().constData());
+        throw 1;
+    }
+
+    void MainWindow::createMode(mapi::ModeInfo *modeInfo) {
+        mMode = modeInfo->createMode();
+
+        if (mMode == nullptr) {
+            printf("Cannot create mode\n");
+            throw 1;
+        }
+
+        mMode->init(mModeWidget);
     }
 }

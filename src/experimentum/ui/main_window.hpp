@@ -27,6 +27,8 @@ namespace e
 
         void deleteCurrentMode();
         void createWidgetForMode();
+        mapi::ModeInfo* findModeInfoOrThrowException(QString &modeName);
+        void createMode(mapi::ModeInfo *modeInfo);
 
     private:
         ModesManager *mModesManager = nullptr;
