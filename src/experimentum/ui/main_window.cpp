@@ -43,6 +43,7 @@ namespace e {
     }
 
     void MainWindow::closeEvent(QCloseEvent *event) {
+        deleteCurrentMode();
         delete mModesManager;
         mModesManager = nullptr;
     }
