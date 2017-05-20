@@ -1,8 +1,8 @@
 #pragma once
 
-#include "view/view.hpp"
+#include "main_view/main_view.hpp"
 #include <mapi/mode.hpp>
-#include <mapi/view/auto_resize_image_widget.hpp>
+#include <mapi/widget/auto_resize_image_widget.hpp>
 #include <QtWidgets>
 
 namespace pix {
@@ -13,6 +13,6 @@ namespace pix {
         void loadImage();
 
     private:
-        View *mView;
+        MainView *mView;
     };
 }

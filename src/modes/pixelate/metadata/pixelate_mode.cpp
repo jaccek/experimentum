@@ -3,7 +3,7 @@
 namespace pix {
 
     void PixelateMode::init(QWidget *mainWidget) {
-        mView = new View();
+        mView = new MainView();
         mView->init(mainWidget);
     }
 
