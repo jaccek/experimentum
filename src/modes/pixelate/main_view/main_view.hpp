@@ -14,13 +14,16 @@ namespace pix {
         void init(QWidget *mainWidget);
 
         virtual void displaySourceImage(mapi::Bitmap &bitmap);
+        virtual void blockAllWidgetsExceptCancelComputation();
+        virtual void unlockAllWidgets();
 
     private:
         mapi::AutoResizeImageWidget* createImageWidget();
         QWidget* createToolsWidget();
 
     private slots:
-        void loadImage();
+        void loadImageClicked();
+        void calculateClicked();
 
     private:
         MainContract::PresenterForView *mPresenter;
@@ -28,5 +31,7 @@ namespace pix {
         QWidget *mMainWidget;
         mapi::AutoResizeImageWidget *mSourceImageView;
         mapi::AutoResizeImageWidget *mDestinationImageView;
+        QPushButton *mCalculateButton;
+        QPushButton *mLoadImageButton;
     };
 }

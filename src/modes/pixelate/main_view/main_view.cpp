@@ -3,6 +3,10 @@
 
 namespace pix {
 
+    const char* const CANCEL_TEXT = "Cancel";
+    const char* const CALCULATE_TEXT = "Calculate";
+    const char* const LOAD_IMAGE_TEXT = "Load Image";
+
     MainView::MainView() {
         mPresenter = new MainPresenter(this);
     }
@@ -31,6 +35,20 @@ namespace pix {
     void MainView::displaySourceImage(mapi::Bitmap &bitmap) {
         mSourceImageView->setPixmap(bitmap);
         mDestinationImageView->setPixmap(bitmap);    // FIXME: temporary
+
+        mCalculateButton->setEnabled(true);
+    }
+
+    void MainView::blockAllWidgetsExceptCancelComputation() {
+        mLoadImageButton->setEnabled(false);
+        mCalculateButton->setEnabled(true);
+        mCalculateButton->setText(CANCEL_TEXT);
+    }
+
+    void MainView::unlockAllWidgets() {
+        mLoadImageButton->setEnabled(true);
+        mCalculateButton->setEnabled(true);
+        mCalculateButton->setText(CALCULATE_TEXT);
     }
 
     mapi::AutoResizeImageWidget* MainView::createImageWidget() {
@@ -45,16 +63,26 @@ namespace pix {
         toolsWidget->setMaximumWidth(200);
 
         QLayout *toolsLayout = new QVBoxLayout();
+        toolsLayout->setAlignment(Qt::AlignTop);
 
-        QPushButton *loadImageButton = new QPushButton("Load image");
-        QObject::connect(loadImageButton, &QPushButton::clicked, this, &MainView::loadImage);
-        toolsLayout->addWidget(loadImageButton);
+        mLoadImageButton = new QPushButton(LOAD_IMAGE_TEXT);
+        QObject::connect(mLoadImageButton, &QPushButton::clicked, this, &MainView::loadImageClicked);
+        toolsLayout->addWidget(mLoadImageButton);
+
+        mCalculateButton = new QPushButton(CALCULATE_TEXT);
+        mCalculateButton->setEnabled(false);
+        QObject::connect(mCalculateButton, &QPushButton::clicked, this, &MainView::calculateClicked);
+        toolsLayout->addWidget(mCalculateButton);
 
         toolsWidget->setLayout(toolsLayout);
         return toolsWidget;
     }
 
-    void MainView::loadImage() {
+    void MainView::loadImageClicked() {
         mPresenter->onLoadButtonClicked();
+    }
+
+    void MainView::calculateClicked() {
+        mPresenter->onCalculateClicked();
     }
 }

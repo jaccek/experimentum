@@ -11,6 +11,8 @@ namespace pix {
             virtual ~View() {}
 
             virtual void displaySourceImage(mapi::Bitmap &bitmap) = 0;
+            virtual void blockAllWidgetsExceptCancelComputation() = 0;
+            virtual void unlockAllWidgets() = 0;
         };
 
         class PresenterForView {
@@ -18,6 +20,7 @@ namespace pix {
             virtual ~PresenterForView() {}
 
             virtual void onLoadButtonClicked() = 0;
+            virtual void onCalculateClicked() = 0;
         };
 
         class Router {

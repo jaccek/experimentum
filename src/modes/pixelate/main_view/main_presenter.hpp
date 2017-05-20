@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main_contract.hpp"
+#include <thread>
 
 namespace pix {
 
@@ -10,9 +11,17 @@ namespace pix {
         virtual ~MainPresenter();
 
         virtual void onLoadButtonClicked();
+        virtual void onCalculateClicked();
+
+    private:
+        void deleteCalculationThread();
 
     private:
         MainContract::View *mView;
         MainContract::Router *mRouter;
+
+        mapi::Bitmap mImage;
+        std::thread *mCalculateThread = nullptr;
+        bool mCancelCalculation = false;
     };
 }
