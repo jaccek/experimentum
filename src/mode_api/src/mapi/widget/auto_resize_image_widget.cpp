@@ -1,10 +1,11 @@
-#include "auto_resize_image_widget.hpp"
+#include "mapi/widget/auto_resize_image_widget.hpp"
 
 namespace mapi {
 
     void AutoResizeImageWidget::setPixmap(const QPixmap &pixmap) {
         mPixmap = pixmap;
         QLabel::setPixmap(getResizedPixmap());
+        setAlignment(Qt::AlignCenter);
     }
 
     void AutoResizeImageWidget::resizeEvent(QResizeEvent *event) {
