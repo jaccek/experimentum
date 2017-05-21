@@ -33,8 +33,8 @@ namespace pix {
     }
 
     void MainView::displaySourceImage(mapi::Bitmap &bitmap) {
-        mSourceImageView->setPixmap(bitmap);
-        mDestinationImageView->setPixmap(bitmap);    // FIXME: temporary
+        mSourceImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()));
+        mDestinationImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()));    // FIXME: temporary
 
         mCalculateButton->setEnabled(true);
     }

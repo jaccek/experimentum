@@ -21,7 +21,7 @@ namespace pix {
         if (mCalculateThread == nullptr) {
             mView->blockAllWidgetsExceptCancelComputation();
             mCancelCalculation = false;
-            mCalculateThread = new std::thread([this]() { printf("thread\n"); });
+            mCalculateThread = new std::thread([this]() { calculate(); });
         } else {
             deleteCalculationThread();
             mView->unlockAllWidgets();
@@ -35,5 +35,9 @@ namespace pix {
             delete mCalculateThread;
             mCalculateThread = nullptr;
         }
+    }
+
+    void MainPresenter::calculate() {
+        //std::map<QColor, int> allColors;
     }
 }

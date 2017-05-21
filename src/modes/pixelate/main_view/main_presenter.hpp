@@ -15,6 +15,7 @@ namespace pix {
 
     private:
         void deleteCalculationThread();
+        void calculate();
 
     private:
         MainContract::View *mView;
