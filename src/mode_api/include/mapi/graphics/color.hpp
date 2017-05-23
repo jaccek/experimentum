@@ -16,6 +16,8 @@ namespace mapi {
         float gf();
         float bf();
 
+        uint32_t asUint32();
+
     private:
         uint8_t mR, mG, mB;
     };

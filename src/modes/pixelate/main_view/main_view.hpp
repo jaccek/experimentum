@@ -14,8 +14,14 @@ namespace pix {
         void init(QWidget *mainWidget);
 
         virtual void displaySourceImage(mapi::Bitmap &bitmap);
+        virtual void displayOutputImage(mapi::Bitmap &bitmap);
+
         virtual void blockAllWidgetsExceptCancelComputation();
+        virtual void unlockCalculateButton();
         virtual void unlockAllWidgets();
+
+        virtual void startTimer();
+        virtual void stopTimer();
 
     private:
         mapi::AutoResizeImageWidget* createImageWidget();
@@ -24,6 +30,7 @@ namespace pix {
     private slots:
         void loadImageClicked();
         void calculateClicked();
+        void timerTicked();
 
     private:
         MainContract::PresenterForView *mPresenter;
@@ -33,5 +40,7 @@ namespace pix {
         mapi::AutoResizeImageWidget *mDestinationImageView;
         QPushButton *mCalculateButton;
         QPushButton *mLoadImageButton;
+
+        QTimer *mTimer = nullptr;
     };
 }

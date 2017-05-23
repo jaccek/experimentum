@@ -34,9 +34,10 @@ namespace pix {
 
     void MainView::displaySourceImage(mapi::Bitmap &bitmap) {
         mSourceImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()));
-        mDestinationImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()));    // FIXME: temporary
+    }
 
-        mCalculateButton->setEnabled(true);
+    void MainView::displayOutputImage(mapi::Bitmap &bitmap) {
+        mDestinationImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()));
     }
 
     void MainView::blockAllWidgetsExceptCancelComputation() {
@@ -45,10 +46,26 @@ namespace pix {
         mCalculateButton->setText(CANCEL_TEXT);
     }
 
+    void MainView::unlockCalculateButton() {
+        mCalculateButton->setEnabled(true);
+    }
+
     void MainView::unlockAllWidgets() {
         mLoadImageButton->setEnabled(true);
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CALCULATE_TEXT);
+    }
+
+    void MainView::startTimer() {
+        mTimer = new QTimer(this);
+        connect(mTimer, &QTimer::timeout, this, &MainView::timerTicked);
+        mTimer->start(1000);
+    }
+
+    void MainView::stopTimer() {
+        mTimer->stop();
+        delete mTimer;
+        mTimer = nullptr;
     }
 
     mapi::AutoResizeImageWidget* MainView::createImageWidget() {
@@ -84,5 +101,9 @@ namespace pix {
 
     void MainView::calculateClicked() {
         mPresenter->onCalculateClicked();
+    }
+
+    void MainView::timerTicked() {
+        mPresenter->onTimerTick();
     }
 }

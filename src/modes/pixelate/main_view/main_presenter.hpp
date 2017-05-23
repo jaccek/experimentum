@@ -1,6 +1,7 @@
 #pragma once
 
 #include "main_contract.hpp"
+#include "calculator/calculator.hpp"
 #include <thread>
 
 namespace pix {
@@ -13,16 +14,23 @@ namespace pix {
         virtual void onLoadButtonClicked();
         virtual void onCalculateClicked();
 
+        virtual void onTimerTick();
+
     private:
         void deleteCalculationThread();
+        void initCalculator();
         void calculate();
 
     private:
         MainContract::View *mView;
         MainContract::Router *mRouter;
 
-        mapi::Bitmap mImage;
+        mapi::Bitmap mSourceImage;
+        mapi::Bitmap mSourceScaledImage;
+        mapi::Bitmap mOutputImage;
+
+        Calculator *mCalculator;
+        Metric *mMetric;
         std::thread *mCalculateThread = nullptr;
-        bool mCancelCalculation = false;
     };
 }

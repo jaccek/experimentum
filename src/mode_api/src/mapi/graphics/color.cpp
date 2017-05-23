@@ -27,4 +27,8 @@ namespace mapi {
     float Color::bf() {
         return (float) mB / 255.0f;
     }
+
+    uint32_t Color::asUint32() {
+        return 0xff000000 | mR << 16 | mG << 8 | mB;
+    }
 }
