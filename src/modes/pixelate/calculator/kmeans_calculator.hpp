@@ -22,6 +22,11 @@ namespace pix {
     private:
         void randomFirstState();
 
+        void resetNewCenters(State &oldState);
+        unsigned findNearestCenterIndex(State &oldState, ColorItem &item);
+        void updateCenter(unsigned centerIndex, ColorItem &color);
+        State createNewState(State &oldState);
+
     private:
         State mState;
         int mIteration;
@@ -32,5 +37,7 @@ namespace pix {
         std::mutex mStateMutex;
 
         Metric *mMetric = nullptr;
+
+        std::vector<ColorItem*> mNewCenters;
     };
 }

@@ -27,53 +27,19 @@ namespace pix {
         // TODO: refactor
         while (mCalculate) {
             ++mIteration;
-            //printf("Calculator: iteration %d\n", mIteration);
-
-            std::vector<ColorItem*> newCenters;
+            printf("Calculator: iteration %d\n", mIteration);
             State oldState = state();
-
-            for (unsigned i = 0; i < oldState.centers.size(); ++i) {
-                newCenters.push_back(nullptr);
-            }
+            resetNewCenters(oldState);
+            printf("A\n");
 
             for (auto item : mColors) {
-                int centerIndex = 0;
-                float minDistance = std::numeric_limits<float>::max();
-
-                for (unsigned i = 0; i < oldState.centers.size(); ++i) {
-                    auto center = oldState.centers[i];
-                    float distance = mMetric->distance(item.color, center);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        centerIndex = i;
-                    }
-                }
-
-                if (newCenters[centerIndex] == nullptr) {
-                    newCenters[centerIndex] = new ColorItem{ item.color, item.count };
-                } else {
-                    int newCount = newCenters[centerIndex]->count + item.count;
-                    int oldCount = newCenters[centerIndex]->count;
-                    auto oldMean = newCenters[centerIndex]->color;
-
-                    float r = (float) (oldMean.r() * oldCount + item.color.r() * item.count) / (float) newCount;
-                    float g = (float) (oldMean.g() * oldCount + item.color.g() * item.count) / (float) newCount;
-                    float b = (float) (oldMean.b() * oldCount + item.color.b() * item.count) / (float) newCount;
-
-                    newCenters[centerIndex]->color = mapi::Color(r, g, b);
-                    newCenters[centerIndex]->count = newCount;
-                }
+                unsigned centerIndex = findNearestCenterIndex(oldState, item);
+                updateCenter(centerIndex, item);
             }
+            printf("B\n");
 
-            State newState;
-            for (unsigned i = 0; i < newCenters.size(); ++i) {
-                if (newCenters[i] != nullptr) {
-                    newState.centers.push_back(newCenters[i]->color);
-                    delete newCenters[i];
-                } else {
-                    newState.centers.push_back(oldState.centers[i]);
-                }
-            }
+            State newState = createNewState(oldState);
+            printf("C\n");
 
             mStateMutex.lock();
             mState = newState;
@@ -113,10 +79,62 @@ namespace pix {
 
     void KMeansCalculator::randomFirstState() {
         srand(time(NULL));
-
         mState.centers.clear();
+
         for (int i = 0; i < mCentersCount; ++i) {
             mState.centers.push_back(mapi::Color(rand() % 256, rand() % 256, rand() % 256));
         }
+    }
+
+    void KMeansCalculator::resetNewCenters(State &oldState) {
+        mNewCenters.clear();
+        for (unsigned i = 0; i < oldState.centers.size(); ++i) {
+            mNewCenters.push_back(nullptr);
+        }
+    }
+
+    unsigned KMeansCalculator::findNearestCenterIndex(State &oldState, ColorItem &item) {
+        unsigned centerIndex = 0;
+        float minDistance = std::numeric_limits<float>::max();
+
+        for (unsigned i = 0; i < oldState.centers.size(); ++i) {
+            auto &center = oldState.centers[i];
+            float distance = mMetric->distance(item.color, center);
+            if (distance < minDistance) {
+                minDistance = distance;
+                centerIndex = i;
+            }
+        }
+        return centerIndex;
+    }
+
+    void KMeansCalculator::updateCenter(unsigned centerIndex, ColorItem &color) {
+        if (mNewCenters[centerIndex] == nullptr) {
+            mNewCenters[centerIndex] = new ColorItem{ color.color, color.count };
+        } else {
+            int newCount = mNewCenters[centerIndex]->count + color.count;
+            int oldCount = mNewCenters[centerIndex]->count;
+            auto oldMean = mNewCenters[centerIndex]->color;
+
+            float r = (float) (oldMean.r() * oldCount + color.color.r() * color.count) / (float) newCount;
+            float g = (float) (oldMean.g() * oldCount + color.color.g() * color.count) / (float) newCount;
+            float b = (float) (oldMean.b() * oldCount + color.color.b() * color.count) / (float) newCount;
+
+            mNewCenters[centerIndex]->color = mapi::Color(r, g, b);
+            mNewCenters[centerIndex]->count = newCount;
+        }
+    }
+
+    Calculator::State KMeansCalculator::createNewState(State &oldState) {
+        State newState;
+        for (unsigned i = 0; i < mNewCenters.size(); ++i) {
+            if (mNewCenters[i] != nullptr) {
+                newState.centers.push_back(mNewCenters[i]->color);
+                delete mNewCenters[i];
+            } else {
+                newState.centers.push_back(oldState.centers[i]);
+            }
+        }
+        return newState;
     }
 }
