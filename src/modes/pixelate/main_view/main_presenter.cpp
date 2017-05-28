@@ -92,7 +92,7 @@ namespace pix {
                 colors.push_back(Calculator::ColorItem{ mSourceScaledImage.pixel(x, y), 1 });
             }
         }
-        mCalculator->init(20, colors);
+        mCalculator->init(10, colors);
     }
 
     void MainPresenter::calculate() {

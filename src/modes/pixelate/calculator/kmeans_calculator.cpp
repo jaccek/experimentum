@@ -1,8 +1,9 @@
 #include "kmeans_calculator.hpp"
 
-#include <cstdlib>
 #include <ctime>
+#include <cmath>
 #include <limits>
+#include <cstdlib>
 
 namespace pix {
     KMeansCalculator::~KMeansCalculator() {
@@ -24,22 +25,19 @@ namespace pix {
         mCalculate = true;
         printf("Calculator: start\n");
 
-        // TODO: refactor
         while (mCalculate) {
             ++mIteration;
             printf("Calculator: iteration %d\n", mIteration);
+
             State oldState = state();
             resetNewCenters(oldState);
-            printf("A\n");
 
             for (auto item : mColors) {
                 unsigned centerIndex = findNearestCenterIndex(oldState, item);
                 updateCenter(centerIndex, item);
             }
-            printf("B\n");
 
             State newState = createNewState(oldState);
-            printf("C\n");
 
             mStateMutex.lock();
             mState = newState;
@@ -112,16 +110,19 @@ namespace pix {
         if (mNewCenters[centerIndex] == nullptr) {
             mNewCenters[centerIndex] = new ColorItem{ color.color, color.count };
         } else {
-            int newCount = mNewCenters[centerIndex]->count + color.count;
-            int oldCount = mNewCenters[centerIndex]->count;
+            float newCount = mNewCenters[centerIndex]->count + color.count;
+            float oldCount = mNewCenters[centerIndex]->count;
             auto oldMean = mNewCenters[centerIndex]->color;
 
-            float r = (float) (oldMean.r() * oldCount + color.color.r() * color.count) / (float) newCount;
-            float g = (float) (oldMean.g() * oldCount + color.color.g() * color.count) / (float) newCount;
-            float b = (float) (oldMean.b() * oldCount + color.color.b() * color.count) / (float) newCount;
+            float centerWeight = oldCount / newCount;
+            float colorWeight = 1.0f - centerWeight;
+
+            int r = (int) round((oldMean.rf() * centerWeight + color.color.rf() * colorWeight) * 255);
+            int g = (int) round((oldMean.gf() * centerWeight + color.color.gf() * colorWeight) * 255);
+            int b = (int) round((oldMean.bf() * centerWeight + color.color.bf() * colorWeight) * 255);
 
             mNewCenters[centerIndex]->color = mapi::Color(r, g, b);
-            mNewCenters[centerIndex]->count = newCount;
+            mNewCenters[centerIndex]->count = (int) newCount;
         }
     }
 
