@@ -1,13 +1,15 @@
 #include "main_presenter.hpp"
 #include "main_router.hpp"
 #include "calculator/kmeans_calculator.hpp"
-#include "calculator/metric/euclides_square_metric.hpp"
+#include "calculator/metric/euclides_rgb_square_metric.hpp"
+#include "calculator/metric/euclides_hsv_metric.hpp"
 
 namespace pix {
     MainPresenter::MainPresenter(MainContract::View *view) : mView(view) {
         mRouter = new MainRouter();
 
-        mMetric = new EuclidesSquareMetric();
+        // mMetric = new EuclidesRgbSquareMetric();
+        mMetric = new EuclidesHsvMetric();
         mCalculator = new KMeansCalculator();
         mCalculator->setMetric(mMetric);
     }
@@ -92,7 +94,7 @@ namespace pix {
                 colors.push_back(Calculator::ColorItem{ mSourceScaledImage.pixel(x, y), 1 });
             }
         }
-        mCalculator->init(10, colors);
+        mCalculator->init(40, colors);
     }
 
     void MainPresenter::calculate() {

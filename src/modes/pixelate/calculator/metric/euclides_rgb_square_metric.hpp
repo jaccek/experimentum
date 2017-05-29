@@ -4,8 +4,9 @@
 
 namespace pix {
 
-    class EuclidesSquareMetric : public Metric {
-        virtual ~EuclidesSquareMetric();
+    class EuclidesRgbSquareMetric : public Metric {
+    public:
+        virtual ~EuclidesRgbSquareMetric();
 
         virtual float distance(mapi::Color &first, mapi::Color &second);
     };

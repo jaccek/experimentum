@@ -1,5 +1,7 @@
 #include "mapi/graphics/color.hpp"
 
+#include <QColor>
+
 namespace mapi {
     Color::Color(uint8_t r, uint8_t g, uint8_t b) : mR(r), mG(g), mB(b) {
     }
@@ -26,6 +28,18 @@ namespace mapi {
 
     float Color::bf() {
         return (float) mB / 255.0f;
+    }
+
+    float Color::hf() {
+        return QColor(mR, mG, mB).hue();
+    }
+
+    float Color::sf() {
+        return QColor(mR, mG, mB).saturationF();
+    }
+
+    float Color::vf() {
+        return QColor(mR, mG, mB).valueF();
     }
 
     uint32_t Color::asUint32() {
