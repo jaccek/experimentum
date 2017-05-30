@@ -7,7 +7,7 @@ namespace pix {
 
     mapi::Bitmap MainRouter::loadImage() {
         QString fileName = QFileDialog::getOpenFileName(nullptr, "Open Image", "/home",
-                "Image Files (*.png *.jpg *.bmp)");
+                "Image Files (*.png *.jpg *.jpeg *.bmp)");
         printf("Selected file: %s\n", fileName.toUtf8().constData());
 
         return mapi::Bitmap(fileName.toUtf8().constData());
