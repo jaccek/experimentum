@@ -53,13 +53,19 @@ namespace pix {
         }
     }
 
+    void MainPresenter::onColorsCountChanged(int colorsCount) {
+        printf("MainPresenter: change colors count: %d\n", colorsCount);
+        mColorsCount = colorsCount;
+        initCalculator();   // TODO: here we can init only colors count
+    }
+
     void MainPresenter::onTimerTick() {
         printf("iteration: %d\n", mCalculator->iteration());
 
         mOutputImage = mSourceScaledImage.clone();
         Calculator::State state = mCalculator->state();
 
-        for (int x = 0; x < mOutputImage.width(); ++x) {
+        for (int x = 0; x < mOutputImage.width(); ++x) {    // TODO: refactor
             for (int y = 0; y < mOutputImage.height(); ++y) {
                 auto color = mOutputImage.pixel(x, y);
                 int bestIdx = 0;
@@ -75,6 +81,10 @@ namespace pix {
             }
         }
         mView->displayOutputImage(mOutputImage);
+    }
+
+    int MainPresenter::colorsCount() {
+        return mColorsCount;
     }
 
     void MainPresenter::deleteCalculationThread() {
@@ -94,7 +104,7 @@ namespace pix {
                 colors.push_back(Calculator::ColorItem{ mSourceScaledImage.pixel(x, y), 1 });
             }
         }
-        mCalculator->init(40, colors);
+        mCalculator->init(mColorsCount, colors);
     }
 
     void MainPresenter::calculate() {

@@ -42,6 +42,7 @@ namespace pix {
 
     void MainView::blockAllWidgetsExceptCancelComputation() {
         mLoadImageButton->setEnabled(false);
+        mColorsCountSpinBox->setEnabled(false);
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CANCEL_TEXT);
     }
@@ -52,6 +53,7 @@ namespace pix {
 
     void MainView::unlockAllWidgets() {
         mLoadImageButton->setEnabled(true);
+        mColorsCountSpinBox->setEnabled(true);
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CALCULATE_TEXT);
     }
@@ -79,7 +81,7 @@ namespace pix {
         toolsWidget->setMinimumWidth(200);
         toolsWidget->setMaximumWidth(200);
 
-        QLayout *toolsLayout = new QVBoxLayout();
+        QBoxLayout *toolsLayout = new QVBoxLayout();
         toolsLayout->setAlignment(Qt::AlignTop);
 
         mLoadImageButton = new QPushButton(LOAD_IMAGE_TEXT);
@@ -91,8 +93,28 @@ namespace pix {
         QObject::connect(mCalculateButton, &QPushButton::clicked, this, &MainView::calculateClicked);
         toolsLayout->addWidget(mCalculateButton);
 
+        toolsLayout->addLayout(createColorsCountSpinBox());
+
         toolsWidget->setLayout(toolsLayout);
         return toolsWidget;
+    }
+
+    QLayout* MainView::createColorsCountSpinBox() {
+        QLayout *layout = new QHBoxLayout();
+
+        QLabel *label = new QLabel("Colors count:");
+        layout->addWidget(label);
+
+        mColorsCountSpinBox = new QSpinBox();
+        mColorsCountSpinBox->setMinimum(5);
+        mColorsCountSpinBox->setMaximum(256);
+        mColorsCountSpinBox->setValue(mPresenter->colorsCount());
+        void (pix::MainView::*slotPointer)(int) = &pix::MainView::colorsCountChanged;
+        void (QSpinBox::*signalPointer)(int) = &QSpinBox::valueChanged;
+        QObject::connect(mColorsCountSpinBox, signalPointer, this, slotPointer);
+        layout->addWidget(mColorsCountSpinBox);
+
+        return layout;
     }
 
     void MainView::loadImageClicked() {
@@ -105,5 +127,9 @@ namespace pix {
 
     void MainView::timerTicked() {
         mPresenter->onTimerTick();
+    }
+
+    void MainView::colorsCountChanged(int newValue) {
+        mPresenter->onColorsCountChanged(newValue);
     }
 }

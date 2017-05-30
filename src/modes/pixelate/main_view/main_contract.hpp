@@ -27,8 +27,11 @@ namespace pix {
 
             virtual void onLoadButtonClicked() = 0;
             virtual void onCalculateClicked() = 0;
+            virtual void onColorsCountChanged(int colorsCount) = 0;
 
             virtual void onTimerTick() = 0;
+
+            virtual int colorsCount() = 0;
         };
 
         class Router {

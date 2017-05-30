@@ -13,8 +13,11 @@ namespace pix {
 
         virtual void onLoadButtonClicked();
         virtual void onCalculateClicked();
+        virtual void onColorsCountChanged(int colorsCount);
 
         virtual void onTimerTick();
+
+        virtual int colorsCount();
 
     private:
         void deleteCalculationThread();
@@ -32,5 +35,7 @@ namespace pix {
         Calculator *mCalculator;
         Metric *mMetric;
         std::thread *mCalculateThread = nullptr;
+
+        int mColorsCount = 20;
     };
 }

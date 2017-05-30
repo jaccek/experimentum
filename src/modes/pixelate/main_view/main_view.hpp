@@ -26,11 +26,13 @@ namespace pix {
     private:
         mapi::AutoResizeImageWidget* createImageWidget();
         QWidget* createToolsWidget();
+        QLayout* createColorsCountSpinBox();
 
     private slots:
         void loadImageClicked();
         void calculateClicked();
         void timerTicked();
+        void colorsCountChanged(int newValue);
 
     private:
         MainContract::PresenterForView *mPresenter;
@@ -40,6 +42,7 @@ namespace pix {
         mapi::AutoResizeImageWidget *mDestinationImageView;
         QPushButton *mCalculateButton;
         QPushButton *mLoadImageButton;
+        QSpinBox *mColorsCountSpinBox;
 
         QTimer *mTimer = nullptr;
     };
