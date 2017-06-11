@@ -8,6 +8,8 @@ namespace pix {
     public:
         virtual ~EuclidesRgbSquareMetric();
 
+        virtual std::string name();
+
         virtual float distance(mapi::Color &first, mapi::Color &second);
     };
 }

@@ -7,6 +7,10 @@ namespace pix {
     EuclidesHsvMetric::~EuclidesHsvMetric() {
     }
 
+    std::string EuclidesHsvMetric::name() {
+        return "Euclides HSV Metric";
+    }
+
     float EuclidesHsvMetric::distance(mapi::Color &first, mapi::Color &second) {
         QVector3D firstVector = convertColorToVector(first);
         QVector3D secondVector = convertColorToVector(second);

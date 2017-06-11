@@ -32,6 +32,11 @@ namespace pix {
         mainWidget->setLayout(layout);
     }
 
+    void MainView::setupMetricsNames(std::vector<Metric*>& metrics)
+    {
+        mMetrics = metrics;
+    }
+
     void MainView::displaySourceImage(mapi::Bitmap &bitmap) {
         mSourceImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()));
     }
@@ -45,6 +50,7 @@ namespace pix {
         mColorsCountSpinBox->setEnabled(false);
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CANCEL_TEXT);
+        mMetricsComboBox->setEnabled(false);
     }
 
     void MainView::unlockCalculateButton() {
@@ -56,6 +62,7 @@ namespace pix {
         mColorsCountSpinBox->setEnabled(true);
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CALCULATE_TEXT);
+        mMetricsComboBox->setEnabled(true);
     }
 
     void MainView::startTimer() {
@@ -95,6 +102,8 @@ namespace pix {
 
         toolsLayout->addLayout(createColorsCountSpinBox());
 
+        toolsLayout->addWidget(createMetricsComboBox());
+
         toolsWidget->setLayout(toolsLayout);
         return toolsWidget;
     }
@@ -117,6 +126,21 @@ namespace pix {
         return layout;
     }
 
+    QComboBox* MainView::createMetricsComboBox() {
+        mMetricsComboBox = new QComboBox();
+
+        QStringList names;
+        for (auto metric : mMetrics) {
+            names << QString(metric->name().c_str());
+        }
+        mMetricsComboBox->insertItems(0, names);
+
+        void (pix::MainView::*slotPointer)(int) = &pix::MainView::metricChanged;
+        void(QComboBox::*signalPointer)(int) = &QComboBox::activated;
+        QObject::connect(mMetricsComboBox, signalPointer, this, slotPointer);
+        return mMetricsComboBox;
+    }
+
     void MainView::loadImageClicked() {
         mPresenter->onLoadButtonClicked();
     }
@@ -131,5 +155,9 @@ namespace pix {
 
     void MainView::colorsCountChanged(int newValue) {
         mPresenter->onColorsCountChanged(newValue);
+    }
+
+    void MainView::metricChanged(int index) {
+        mPresenter->onMetricSelected(mMetrics[index]);
     }
 }

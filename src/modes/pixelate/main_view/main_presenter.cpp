@@ -8,10 +8,14 @@ namespace pix {
     MainPresenter::MainPresenter(MainContract::View *view) : mView(view) {
         mRouter = new MainRouter();
 
-        // mMetric = new EuclidesRgbSquareMetric();
-        mMetric = new EuclidesHsvMetric();
+        std::vector<Metric*> metrics;
+        metrics.push_back(new EuclidesHsvMetric());
+        metrics.push_back(new EuclidesRgbSquareMetric());
+        view->setupMetricsNames(metrics);
+        mCurrentMetric = metrics[0];
+
         mCalculator = new KMeansCalculator();
-        mCalculator->setMetric(mMetric);
+        mCalculator->setMetric(mCurrentMetric);
     }
 
     MainPresenter::~MainPresenter() {
@@ -59,6 +63,12 @@ namespace pix {
         initCalculator();   // TODO: here we can init only colors count
     }
 
+    void MainPresenter::onMetricSelected(Metric* metric) {
+        printf("MainPresenter: change metric to: %s\n", metric->name().c_str());
+        mCurrentMetric = metric;
+        mCalculator->setMetric(mCurrentMetric);
+    }
+
     void MainPresenter::onTimerTick() {
         printf("iteration: %d\n", mCalculator->iteration());
 
@@ -71,7 +81,7 @@ namespace pix {
                 int bestIdx = 0;
                 float minDistance = 1000000000.0f;
                 for (unsigned i = 0; i < state.centers.size(); ++i) {
-                    float distance = mMetric->distance(state.centers[i], color);
+                    float distance = mCurrentMetric->distance(state.centers[i], color);
                     if (distance < minDistance) {
                         minDistance = distance;
                         bestIdx = i;

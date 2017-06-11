@@ -14,6 +14,7 @@ namespace pix {
         virtual void onLoadButtonClicked();
         virtual void onCalculateClicked();
         virtual void onColorsCountChanged(int colorsCount);
+        virtual void onMetricSelected(Metric* metric);
 
         virtual void onTimerTick();
 
@@ -33,7 +34,7 @@ namespace pix {
         mapi::Bitmap mOutputImage;
 
         Calculator *mCalculator;
-        Metric *mMetric;
+        Metric* mCurrentMetric;
         std::thread *mCalculateThread = nullptr;
 
         int mColorsCount = 20;

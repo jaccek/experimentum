@@ -5,6 +5,10 @@ namespace pix {
     EuclidesRgbSquareMetric::~EuclidesRgbSquareMetric() {
     }
 
+    std::string EuclidesRgbSquareMetric::name() {
+        return "Euclides RGB Square Metric";
+    }
+
     float EuclidesRgbSquareMetric::distance(mapi::Color &first, mapi::Color &second) {
         float dr = first.rf() - second.rf();
         float dg = first.gf() - second.gf();

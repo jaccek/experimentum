@@ -9,6 +9,8 @@ namespace pix {
     public:
         virtual ~EuclidesHsvMetric();
 
+        virtual std::string name();
+
         virtual float distance(mapi::Color &first, mapi::Color &second);
 
     private:
