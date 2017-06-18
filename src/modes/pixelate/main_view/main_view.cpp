@@ -42,7 +42,7 @@ namespace pix {
     }
 
     void MainView::displayOutputImage(mapi::Bitmap &bitmap) {
-        mDestinationImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()));
+        mDestinationImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()), Qt::FastTransformation);
     }
 
     void MainView::blockAllWidgetsExceptCancelComputation() {

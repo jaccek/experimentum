@@ -24,5 +24,6 @@ namespace mapi {
 
     private:
         uint8_t mR, mG, mB;
+        float mH, mS, mV;
     };
 }

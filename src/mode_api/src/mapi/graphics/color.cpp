@@ -4,6 +4,10 @@
 
 namespace mapi {
     Color::Color(uint8_t r, uint8_t g, uint8_t b) : mR(r), mG(g), mB(b) {
+        QColor color(mR, mG, mB);
+        mH = color.hue();
+        mS = color.saturationF();
+        mV = color.valueF();
     }
 
     uint8_t Color::r() {
@@ -31,15 +35,15 @@ namespace mapi {
     }
 
     float Color::hf() {
-        return QColor(mR, mG, mB).hue();
+        return mH;
     }
 
     float Color::sf() {
-        return QColor(mR, mG, mB).saturationF();
+        return mS;
     }
 
     float Color::vf() {
-        return QColor(mR, mG, mB).valueF();
+        return mV;
     }
 
     uint32_t Color::asUint32() {
