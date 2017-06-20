@@ -76,21 +76,7 @@ namespace pix {
         mOutputImage = mSourceScaledImage.clone();
         Calculator::State state = mCalculator->state();
 
-        for (int x = 0; x < mOutputImage.width(); ++x) {    // TODO: refactor
-            for (int y = 0; y < mOutputImage.height(); ++y) {
-                auto color = mOutputImage.pixel(x, y);
-                int bestIdx = 0;
-                float minDistance = 1000000000.0f;
-                for (unsigned i = 0; i < state.centers.size(); ++i) {
-                    float distance = mCurrentMetric->distance(state.centers[i], color);
-                    if (distance < minDistance) {
-                        minDistance = distance;
-                        bestIdx = i;
-                    }
-                }
-                mOutputImage.setPixel(x, y, state.centers[bestIdx]);
-            }
-        }
+        updateOutputImage(state);
         mView->displayOutputImage(mOutputImage);
     }
 
@@ -111,11 +97,11 @@ namespace pix {
         std::vector<Calculator::ColorItem> colors;
         std::map<uint32_t, unsigned> colorToIndexMap;
 
-        // TODO: refactor
         for (int x = 0; x < mSourceScaledImage.width(); ++x) {
             for (int y = 0; y < mSourceScaledImage.height(); ++y) {
                 auto color = mSourceScaledImage.pixel(x, y);
                 auto iterator = colorToIndexMap.find(color.asUint32());
+
                 if (iterator == colorToIndexMap.end()) {
                     colorToIndexMap[color.asUint32()] = colors.size();
                     colors.push_back(Calculator::ColorItem{ color, 1 });
@@ -124,11 +110,31 @@ namespace pix {
                 }
             }
         }
-        printf("unique colors count: %d\n", colors.size());
+
+        printf("unique colors count: %d\n", (int) colors.size());
         mCalculator->init(mColorsCount, colors);
     }
 
     void MainPresenter::calculate() {
         mCalculator->calculate();
+    }
+
+    void MainPresenter::updateOutputImage(Calculator::State state) {
+        for (int x = 0; x < mOutputImage.width(); ++x) {
+            for (int y = 0; y < mOutputImage.height(); ++y) {
+                auto color = mOutputImage.pixel(x, y);
+                int bestIdx = 0;
+                float minDistance = 1000000000.0f;
+
+                for (unsigned i = 0; i < state.centers.size(); ++i) {
+                    float distance = mCurrentMetric->distance(state.centers[i], color);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        bestIdx = i;
+                    }
+                }
+                mOutputImage.setPixel(x, y, state.centers[bestIdx]);
+            }
+        }
     }
 }

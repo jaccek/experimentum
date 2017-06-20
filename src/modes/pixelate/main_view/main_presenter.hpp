@@ -24,6 +24,7 @@ namespace pix {
         void deleteCalculationThread();
         void initCalculator();
         void calculate();
+        void updateOutputImage(Calculator::State state);
 
     private:
         MainContract::View *mView;
