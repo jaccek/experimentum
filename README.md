@@ -21,10 +21,6 @@ Preferred way to compile project:
 
 1. Open terminal and go to `artifacts` folder.
 
-1. Run this commands in terminal:
-
-  ```bash
-  build.sh
-  ```
+1. Run `build.sh` script.
 
 1. Compiled application should be in `artifacts` folder.
