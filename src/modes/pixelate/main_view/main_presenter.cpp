@@ -3,6 +3,7 @@
 #include "calculator/kmeans_calculator.hpp"
 #include "calculator/metric/euclides_rgb_square_metric.hpp"
 #include "calculator/metric/euclides_hsv_metric.hpp"
+#include <map>
 
 namespace pix {
     MainPresenter::MainPresenter(MainContract::View *view) : mView(view) {
@@ -108,12 +109,22 @@ namespace pix {
 
     void MainPresenter::initCalculator() {
         std::vector<Calculator::ColorItem> colors;
+        std::map<uint32_t, unsigned> colorToIndexMap;
+
+        // TODO: refactor
         for (int x = 0; x < mSourceScaledImage.width(); ++x) {
             for (int y = 0; y < mSourceScaledImage.height(); ++y) {
-                // TODO: merge same colors
-                colors.push_back(Calculator::ColorItem{ mSourceScaledImage.pixel(x, y), 1 });
+                auto color = mSourceScaledImage.pixel(x, y);
+                auto iterator = colorToIndexMap.find(color.asUint32());
+                if (iterator == colorToIndexMap.end()) {
+                    colorToIndexMap[color.asUint32()] = colors.size();
+                    colors.push_back(Calculator::ColorItem{ color, 1 });
+                } else {
+                    colors[iterator->second].count += 1;
+                }
             }
         }
+        printf("unique colors count: %d\n", colors.size());
         mCalculator->init(mColorsCount, colors);
     }
 
