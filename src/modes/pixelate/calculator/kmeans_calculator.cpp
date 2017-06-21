@@ -9,79 +9,15 @@ namespace pix {
     KMeansCalculator::~KMeansCalculator() {
     }
 
-    void KMeansCalculator::init(int centersCount, std::vector<ColorItem> &colors) {
-        mIteration = 0;
-        mCentersCount = centersCount;
+    Calculator::State KMeansCalculator::makeSingleIteration(State oldState) {
+        resetNewCenters(oldState);
 
-        mColors.clear();
-        for (auto item : colors) {
-            mColors.push_back(item);
+        for (auto item : colors()) {
+            unsigned centerIndex = findNearestCenterIndex(oldState, item);
+            updateCenter(centerIndex, item);
         }
 
-        randomFirstState();
-    }
-
-    void KMeansCalculator::calculate() {
-        mCalculate = true;
-        printf("Calculator: start\n");
-
-        while (mCalculate) {
-            ++mIteration;
-            printf("Calculator: iteration %d\n", mIteration);
-
-            State oldState = state();
-            resetNewCenters(oldState);
-
-            for (auto item : mColors) {
-                unsigned centerIndex = findNearestCenterIndex(oldState, item);
-                updateCenter(centerIndex, item);
-            }
-
-            State newState = createNewState(oldState);
-
-            mStateMutex.lock();
-            mState = newState;
-            mStateMutex.unlock();
-        }
-        printf("Calculator: end\n");
-    }
-
-    void KMeansCalculator::breakCalculation() {
-        mCalculate = false;
-    }
-
-    void KMeansCalculator::setMetric(Metric *metric) {
-        mMetric = metric;
-    }
-
-    Calculator::State KMeansCalculator::state() {
-        mStateMutex.lock();
-
-        State state;
-        for (auto center : mState.centers) {
-            state.centers.push_back(center);
-        }
-
-        mStateMutex.unlock();
-
-        return state;
-    }
-
-    int KMeansCalculator::iteration() {
-        return mIteration;
-    }
-
-    Metric* KMeansCalculator::metric() {
-        return mMetric;
-    }
-
-    void KMeansCalculator::randomFirstState() {
-        srand(time(NULL));
-        mState.centers.clear();
-
-        for (int i = 0; i < mCentersCount; ++i) {
-            mState.centers.push_back(mapi::Color(rand() % 256, rand() % 256, rand() % 256));
-        }
+        return createNewState(oldState);
     }
 
     void KMeansCalculator::resetNewCenters(State &oldState) {
@@ -97,7 +33,7 @@ namespace pix {
 
         for (unsigned i = 0; i < oldState.centers.size(); ++i) {
             auto &center = oldState.centers[i];
-            float distance = mMetric->distance(item.color, center);
+            float distance = metric()->distance(item.color, center);
             if (distance < minDistance) {
                 minDistance = distance;
                 centerIndex = i;

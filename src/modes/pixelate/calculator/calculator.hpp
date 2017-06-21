@@ -3,6 +3,7 @@
 #include "metric/metric.hpp"
 #include <mapi/graphics/color.hpp>
 #include <vector>
+#include <mutex>
 
 namespace pix {
 
@@ -20,14 +21,41 @@ namespace pix {
     public:
         virtual ~Calculator() {}
 
-        virtual void init(int centresCount, std::vector<ColorItem> &colors) = 0;
 
-        virtual void calculate() = 0;
-        virtual void breakCalculation() = 0;
-        virtual void setMetric(Metric *metric) = 0;
+    protected:
+        virtual State makeSingleIteration(State oldState) = 0;
 
-        virtual State state() = 0;
-        virtual int iteration() = 0;
-        virtual Metric* metric() = 0;
+        // virtual void internalInit(int centresCount, std::vector<ColorItem> &colors) = 0;
+
+    public:
+        void init(int centresCount, std::vector<ColorItem> &colors);
+
+        void calculate();
+        void breakCalculation();
+
+        State state();
+        int iteration();
+        Metric* metric();
+
+        void setMetric(Metric *metric);
+
+    protected:
+        std::vector<ColorItem>& colors();
+        int centersCount();
+
+    private:
+        void randomFirstState();
+
+    private:
+        bool mCalculate = true;
+        int mIteration = 0;
+
+        Metric* mMetric = nullptr;
+
+        int mCentersCount;
+        std::vector<ColorItem> mColors;
+
+        State mState;
+        std::mutex mStateMutex;
     };
 }
