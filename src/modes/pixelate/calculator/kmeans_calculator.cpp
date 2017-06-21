@@ -1,9 +1,7 @@
 #include "kmeans_calculator.hpp"
 
-#include <ctime>
 #include <cmath>
 #include <limits>
-#include <cstdlib>
 
 namespace pix {
     KMeansCalculator::~KMeansCalculator() {

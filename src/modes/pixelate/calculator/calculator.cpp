@@ -1,4 +1,6 @@
 #include "calculator.hpp"
+#include <ctime>
+#include <cstdlib>
 
 namespace pix {
 
@@ -19,7 +21,6 @@ namespace pix {
         printf("Calculator: start\n");
 
         while (mCalculate) {
-            ++mIteration;
             printf("Calculator: iteration %d\n", mIteration);
 
             State oldState = state();
@@ -28,6 +29,7 @@ namespace pix {
             mStateMutex.lock();
             mState = newState;
             mStateMutex.unlock();
+            ++mIteration;
         }
         printf("Calculator: end\n");
     }
