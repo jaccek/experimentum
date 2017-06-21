@@ -17,7 +17,7 @@ namespace mapi {
 
         auto xyv = vector * rotation;
         mX = xyv.x();
-        mY = xyv.y();
+        mY = xyv.z();
     }
 
     uint8_t Color::r() {
