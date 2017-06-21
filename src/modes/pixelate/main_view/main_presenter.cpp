@@ -1,5 +1,6 @@
 #include "main_presenter.hpp"
 #include "main_router.hpp"
+#include "calculator/gng_calculator.hpp"
 #include "calculator/kmeans_calculator.hpp"
 #include "calculator/metric/euclides_rgb_square_metric.hpp"
 #include "calculator/metric/euclides_hsv_metric.hpp"
@@ -15,7 +16,8 @@ namespace pix {
         view->setupMetricsNames(metrics);
         mCurrentMetric = metrics[0];
 
-        mCalculator = new KMeansCalculator();
+        // mCalculator = new KMeansCalculator();
+        mCalculator = new GngCalculator();
         mCalculator->setMetric(mCurrentMetric);
     }
 
