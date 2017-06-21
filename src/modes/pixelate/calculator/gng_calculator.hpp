@@ -35,6 +35,7 @@ namespace pix {
         };
 
     public:
+        GngCalculator();
         virtual ~GngCalculator();
 
     protected:
@@ -42,8 +43,12 @@ namespace pix {
 
     private:
         State createInitialState();
+        Node* findNearestNodeExcept(mapi::Color &color, Node *exceptionNode);
 
     private:
         std::vector<Node*> mNodes;
+        std::vector<mapi::Color> mInputs;
+
+        const int ADDING_NODE_DELAY = 10;
     };
 }
