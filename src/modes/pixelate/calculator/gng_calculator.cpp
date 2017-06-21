@@ -77,10 +77,10 @@ namespace pix {
         // TODO: refactor
         // crate inputs in random order
         if (mInputs.size() == 0) {
-            for (auto item = colors()) {
+            for (auto item : colors()) {
                 for (int i = 0; i < item.count; ++i) {
                     if (mInputs.size() == 0) {
-                        mInputs.push_back(item.color)
+                        mInputs.push_back(item.color);
                     } else {
                         int idx = rand() % (mInputs.size() + 1);     // TODO: +1 may crash application
                         mInputs.insert(mInputs.begin() + idx, item.color);
@@ -97,7 +97,7 @@ namespace pix {
         // algorithm step
         auto nearestNode = findNearestNodeExcept(color, nullptr);
         auto secondNearestNode = findNearestNodeExcept(color, nearestNode);
-        
+
         // TODO: move finded nodes to color
         // TODO: increase edges weight (only connected to nearest node)
         // TODO: update nearest node error

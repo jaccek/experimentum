@@ -3,7 +3,7 @@
 #include "calculator/gng_calculator.hpp"
 #include "calculator/kmeans_calculator.hpp"
 #include "calculator/metric/euclides_rgb_square_metric.hpp"
-#include "calculator/metric/euclides_hsv_metric.hpp"
+#include "calculator/metric/euclides_hsv_square_metric.hpp"
 #include <map>
 
 namespace pix {
@@ -11,13 +11,13 @@ namespace pix {
         mRouter = new MainRouter();
 
         std::vector<Metric*> metrics;
-        metrics.push_back(new EuclidesHsvMetric());
+        metrics.push_back(new EuclidesHsvSquareMetric());
         metrics.push_back(new EuclidesRgbSquareMetric());
         view->setupMetricsNames(metrics);
         mCurrentMetric = metrics[0];
 
-        // mCalculator = new KMeansCalculator();
-        mCalculator = new GngCalculator();
+        mCalculator = new KMeansCalculator();
+        // mCalculator = new GngCalculator();
         mCalculator->setMetric(mCurrentMetric);
     }
 
