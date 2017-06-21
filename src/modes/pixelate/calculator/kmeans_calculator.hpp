@@ -13,8 +13,6 @@ namespace pix {
         virtual State makeSingleIteration(State oldState);
 
     private:
-        void randomFirstState();
-
         void resetNewCenters(State &oldState);
         unsigned findNearestCenterIndex(State &oldState, ColorItem &item);
         void updateCenter(unsigned centerIndex, ColorItem &color);

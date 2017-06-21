@@ -21,11 +21,8 @@ namespace pix {
     public:
         virtual ~Calculator() {}
 
-
     protected:
         virtual State makeSingleIteration(State oldState) = 0;
-
-        // virtual void internalInit(int centresCount, std::vector<ColorItem> &colors) = 0;
 
     public:
         void init(int centresCount, std::vector<ColorItem> &colors);
