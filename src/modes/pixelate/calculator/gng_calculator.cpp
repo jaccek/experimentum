@@ -21,7 +21,16 @@ namespace pix {
         node->edges.push_back(edge);
     }
 
-    std::vector<GngCalculator::Node*> GngCalculator::Node::getNeighbours() {
+    void GngCalculator::Node::detachEdge(Edge* edge) {
+        for (auto iterator = edges.begin(); iterator != edges.end(); ++iterator) {
+            if (*iterator == edge) {
+                edges.erase(iterator);
+                break;
+            }
+        }
+    }
+
+    std::vector<GngCalculator::Node*> GngCalculator::Node::neighbours() {
         std::vector<Node*> neighbours;
         for (auto edge : edges) {
             auto node = edge->firstNode == this ? edge->secondNode : edge->firstNode;
@@ -30,13 +39,25 @@ namespace pix {
         return neighbours;
     }
 
-    void GngCalculator::Node::detachEdge(Edge* edge) {
-        for (auto iterator = edges.begin(); iterator != edges.end(); ++iterator) {
-            if (*iterator == edge) {
-                edges.erase(iterator);
-                break;
+    int GngCalculator::Node::neighboursCount() {
+        return edges.size();
+    }
+
+    GngCalculator::Edge* GngCalculator::Node::edgeToNode(GngCalculator::Node* node) {
+        for (auto edge : edges) {
+            if (edge->firstNode == node || edge->secondNode == node) {
+                return edge;
             }
         }
+        return nullptr;
+    }
+
+    void GngCalculator::Node::moveToTarget(mapi::Color &target, float weight) {
+        int r = (int) (color.r() + (target.r() - color.r()) * weight);
+        int g = (int) (color.g() + (target.g() - color.g()) * weight);
+        int b = (int) (color.b() + (target.b() - color.b()) * weight);
+
+        color = mapi::Color(r, g, b);
     }
 
 
@@ -60,11 +81,6 @@ namespace pix {
     }
 
     Calculator::State GngCalculator::makeSingleIteration(Calculator::State oldState) {
-        // TODO: ugly solution!!!
-        // if (iteration() == 0) {
-        //     oldState = createInitialState();
-        // }
-
         // TODO: refactor
         if (mNodes.size() == 0) {
             for (int i = 0; i < 2; ++i) {
@@ -94,29 +110,104 @@ namespace pix {
         mapi::Color color = mInputs[0];
         mInputs.erase(mInputs.begin());
 
-        // algorithm step
+        // find 2 nearest nodes
         auto nearestNode = findNearestNodeExcept(color, nullptr);
         auto secondNearestNode = findNearestNodeExcept(color, nearestNode);
 
-        // TODO: move finded nodes to color
-        // TODO: increase edges weight (only connected to nearest node)
-        // TODO: update nearest node error
-        // TODO: reset or create edge between nearest nodes
-        // TODO: remove too old edges and disconnected nodes
+        // update nearest node error
+        nearestNode->error += metric()->distance(nearestNode->color, color);
 
-        if ((iteration() + 1) % ADDING_NODE_DELAY) {
-            // TODO: add new nodes
+        // move nearest node and it's neighbours to color
+        nearestNode->moveToTarget(color, mNearestNodeMovementWeight);
+        for (auto node : nearestNode->neighbours()) {
+            node->moveToTarget(color, mNearestNodeNeighboursMovementWeight);
         }
 
-        return oldState;
-    }
-
-    Calculator::State GngCalculator::createInitialState() {
-        State state;
-        for (int i = 0; i < 2; ++i) {
-            state.centers.push_back(mapi::Color(rand() % 256, rand() % 256, rand() % 256));
+        // increase edges weight (only connected to nearest node)
+        for (auto edge : nearestNode->edges) {
+            edge->age += 1;
         }
-        return state;
+
+        // reset or create edge between nearest nodes
+        auto edge = nearestNode->edgeToNode(secondNearestNode);
+        if (edge == nullptr) {
+            nearestNode->createEdge(secondNearestNode);
+        } else {
+            edge->age = 0;
+        }
+
+        // remove too old edges
+        for (auto node : mNodes) {
+            for (unsigned i = 0; i < node->edges.size(); ++i) {
+                auto edge = node->edges[i];
+                if (edge->age > mMaxEdgeAge) {
+                    delete edge;
+                    --i;
+                }
+            }
+        }
+
+        // remove nodes without neighbours
+        for (unsigned i = 0; i < mNodes.size(); ++i) {
+            if (mNodes[i]->neighboursCount() == 0) {
+                delete mNodes[i];
+                mNodes.erase(mNodes.begin() + i);
+                --i;
+            }
+        }
+
+        // add new node
+        if ((iteration() + 1) % mAddingNodeDelay == 0 && mNodes.size() < (unsigned) centersCount()) {
+            // find node with max error
+            float maxError = -1.0f;
+            Node *errorNode = nullptr;
+            for (auto node : mNodes) {
+                if (node->error > maxError) {
+                    maxError = node->error;
+                    errorNode = node;
+                }
+            }
+
+            // find it's neighbours with max error
+            maxError = -1.0f;
+            Node *secondErrorNode = nullptr;
+            for (auto node : errorNode->neighbours()) {
+                if (node->error > maxError) {
+                    maxError = node->error;
+                    secondErrorNode = node;
+                }
+            }
+
+            // create new node
+            auto newNode = new Node();
+            newNode->color = mapi::Color(
+                    (errorNode->color.r() + secondErrorNode->color.r()) / 2,
+                    (errorNode->color.g() + secondErrorNode->color.g()) / 2,
+                    (errorNode->color.b() + secondErrorNode->color.b()) / 2);
+            mNodes.push_back(newNode);
+
+            // decrease errors
+            errorNode->error *= mErrorDecreaseAfterAddFactor;
+            secondErrorNode->error *= mErrorDecreaseAfterAddFactor;
+            newNode->error = secondErrorNode->error;
+
+            // remove old edge
+            delete errorNode->edgeToNode(secondErrorNode);
+
+            // create new edges
+            newNode->createEdge(errorNode);
+            newNode->createEdge(secondErrorNode);
+        }
+        printf("Nodes count: %d\n", (int) mNodes.size());
+
+        // decrease error & create new state
+        auto newState = State();
+        for (auto node : mNodes) {
+            node->error *= mErrorDecreaseFactor;
+            newState.colors.push_back(node->color);
+        }
+
+        return newState;
     }
 
     GngCalculator::Node* GngCalculator::findNearestNodeExcept(mapi::Color &color, GngCalculator::Node *exceptionNode) {

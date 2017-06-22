@@ -15,7 +15,7 @@ namespace pix {
         };
 
         struct State {
-            std::vector<mapi::Color> centers;
+            std::vector<mapi::Color> colors;
         };
 
     public:
@@ -25,7 +25,7 @@ namespace pix {
         virtual State makeSingleIteration(State oldState) = 0;
 
     public:
-        void init(int centresCount, std::vector<ColorItem> &colors);
+        void init(int centresCount, std::vector<ColorItem> &colors);    // TODO: reset GNG state!!!
 
         void calculate();
         void breakCalculation();

@@ -16,8 +16,8 @@ namespace pix {
         view->setupMetricsNames(metrics);
         mCurrentMetric = metrics[0];
 
-        mCalculator = new KMeansCalculator();
-        // mCalculator = new GngCalculator();
+        // mCalculator = new KMeansCalculator();
+        mCalculator = new GngCalculator();
         mCalculator->setMetric(mCurrentMetric);
     }
 
@@ -122,20 +122,24 @@ namespace pix {
     }
 
     void MainPresenter::updateOutputImage(Calculator::State state) {
+        if (state.colors.size() == 0) {
+            return;
+        }
+
         for (int x = 0; x < mOutputImage.width(); ++x) {
             for (int y = 0; y < mOutputImage.height(); ++y) {
                 auto color = mOutputImage.pixel(x, y);
                 int bestIdx = 0;
                 float minDistance = 1000000000.0f;
 
-                for (unsigned i = 0; i < state.centers.size(); ++i) {
-                    float distance = mCurrentMetric->distance(state.centers[i], color);
+                for (unsigned i = 0; i < state.colors.size(); ++i) {
+                    float distance = mCurrentMetric->distance(state.colors[i], color);
                     if (distance < minDistance) {
                         minDistance = distance;
                         bestIdx = i;
                     }
                 }
-                mOutputImage.setPixel(x, y, state.centers[bestIdx]);
+                mOutputImage.setPixel(x, y, state.colors[bestIdx]);
             }
         }
     }

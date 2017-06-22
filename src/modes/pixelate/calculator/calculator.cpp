@@ -42,8 +42,8 @@ namespace pix {
         mStateMutex.lock();
 
         State state;
-        for (auto center : mState.centers) {
-            state.centers.push_back(center);
+        for (auto center : mState.colors) {
+            state.colors.push_back(center);
         }
 
         mStateMutex.unlock();
@@ -73,10 +73,10 @@ namespace pix {
 
     void Calculator::randomFirstState() {
         srand(time(NULL));
-        mState.centers.clear();
+        mState.colors.clear();
 
         for (int i = 0; i < mCentersCount; ++i) {
-            mState.centers.push_back(mapi::Color(rand() % 256, rand() % 256, rand() % 256));
+            mState.colors.push_back(mapi::Color(rand() % 256, rand() % 256, rand() % 256));
         }
     }
 }

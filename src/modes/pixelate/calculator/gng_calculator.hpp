@@ -21,7 +21,12 @@ namespace pix {
 
             void createEdge(Node* node);
             void detachEdge(Edge* edge);
-            std::vector<Node*> getNeighbours();
+
+            std::vector<Node*> neighbours();
+            int neighboursCount();
+            Edge* edgeToNode(Node* node);
+
+            void moveToTarget(mapi::Color &target, float weight);
 
         private:
         };
@@ -42,13 +47,18 @@ namespace pix {
         virtual State makeSingleIteration(State oldState);
 
     private:
-        State createInitialState();
         Node* findNearestNodeExcept(mapi::Color &color, Node *exceptionNode);
 
     private:
         std::vector<Node*> mNodes;
         std::vector<mapi::Color> mInputs;
 
-        const int ADDING_NODE_DELAY = 10;
+        float mNearestNodeMovementWeight = 0.05f;
+        float mNearestNodeNeighboursMovementWeight = 0.0006f;
+        int mMaxEdgeAge = 100;
+        int mAddingNodeDelay = 300;
+
+        float mErrorDecreaseFactor = 0.9995f;
+        float mErrorDecreaseAfterAddFactor = 0.5f;
     };
 }
