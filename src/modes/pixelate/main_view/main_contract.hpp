@@ -1,5 +1,6 @@
 #pragma once
 
+#include "calculator/calculator.hpp"
 #include "calculator/metric/metric.hpp"
 #include <mapi/graphics/bitmap.hpp>
 #include <vector>
@@ -13,6 +14,7 @@ namespace pix {
             virtual ~View() {}
 
             virtual void setupMetricsNames(std::vector<Metric*>& metrics) = 0;
+            virtual void setupCalculatorsNames(std::vector<Calculator*>& calculators) = 0;
 
             virtual void displaySourceImage(mapi::Bitmap &bitmap) = 0;
             virtual void displayOutputImage(mapi::Bitmap &bitmap) = 0;
@@ -32,6 +34,7 @@ namespace pix {
             virtual void onLoadButtonClicked() = 0;
             virtual void onCalculateClicked() = 0;
             virtual void onColorsCountChanged(int colorsCount) = 0;
+            virtual void onCalculatorSelected(Calculator* calculator) = 0;
             virtual void onMetricSelected(Metric* metric) = 0;
 
             virtual void onTimerTick() = 0;

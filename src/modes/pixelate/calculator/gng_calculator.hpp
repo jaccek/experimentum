@@ -43,6 +43,8 @@ namespace pix {
         GngCalculator();
         virtual ~GngCalculator();
 
+        virtual std::string name();
+
     protected:
         virtual State makeSingleIteration(State oldState);
 

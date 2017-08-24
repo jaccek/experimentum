@@ -32,9 +32,12 @@ namespace pix {
         mainWidget->setLayout(layout);
     }
 
-    void MainView::setupMetricsNames(std::vector<Metric*>& metrics)
-    {
+    void MainView::setupMetricsNames(std::vector<Metric*>& metrics) {
         mMetrics = metrics;
+    }
+
+    void MainView::setupCalculatorsNames(std::vector<Calculator*>& calculators) {
+        mCalculators = calculators;
     }
 
     void MainView::displaySourceImage(mapi::Bitmap &bitmap) {
@@ -51,6 +54,7 @@ namespace pix {
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CANCEL_TEXT);
         mMetricsComboBox->setEnabled(false);
+        mCalculatorsComboBox->setEnabled(false);
     }
 
     void MainView::unlockCalculateButton() {
@@ -63,6 +67,7 @@ namespace pix {
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CALCULATE_TEXT);
         mMetricsComboBox->setEnabled(true);
+        mCalculatorsComboBox->setEnabled(true);
     }
 
     void MainView::startTimer() {
@@ -101,8 +106,8 @@ namespace pix {
         toolsLayout->addWidget(mCalculateButton);
 
         toolsLayout->addLayout(createColorsCountSpinBox());
-
         toolsLayout->addWidget(createMetricsComboBox());
+        toolsLayout->addWidget(createCalculatorsComboBox());
 
         toolsWidget->setLayout(toolsLayout);
         return toolsWidget;
@@ -141,6 +146,21 @@ namespace pix {
         return mMetricsComboBox;
     }
 
+    QComboBox* MainView::createCalculatorsComboBox() {
+        mCalculatorsComboBox = new QComboBox();
+
+        QStringList names;
+        for (auto calculator : mCalculators) {
+            names << QString(calculator->name().c_str());
+        }
+        mCalculatorsComboBox->insertItems(0, names);
+
+        void (pix::MainView::*slotPointer)(int) = &pix::MainView::calculatorChanged;
+        void(QComboBox::*signalPointer)(int) = &QComboBox::activated;
+        QObject::connect(mCalculatorsComboBox, signalPointer, this, slotPointer);
+        return mCalculatorsComboBox;
+    }
+
     void MainView::loadImageClicked() {
         mPresenter->onLoadButtonClicked();
     }
@@ -159,5 +179,9 @@ namespace pix {
 
     void MainView::metricChanged(int index) {
         mPresenter->onMetricSelected(mMetrics[index]);
+    }
+
+    void MainView::calculatorChanged(int index) {
+        mPresenter->onCalculatorSelected(mCalculators[index]);
     }
 }

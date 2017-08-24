@@ -7,6 +7,10 @@ namespace pix {
     KMeansCalculator::~KMeansCalculator() {
     }
 
+    std::string KMeansCalculator::name() {
+        return "k-means";
+    }
+
     Calculator::State KMeansCalculator::makeSingleIteration(State oldState) {
         resetNewCenters(oldState);
 

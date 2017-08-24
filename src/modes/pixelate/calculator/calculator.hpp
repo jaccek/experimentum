@@ -21,6 +21,8 @@ namespace pix {
     public:
         virtual ~Calculator() {}
 
+        virtual std::string name() = 0;
+
     protected:
         virtual State makeSingleIteration(State oldState) = 0;
 

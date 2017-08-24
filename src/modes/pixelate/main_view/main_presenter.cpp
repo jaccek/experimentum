@@ -16,8 +16,12 @@ namespace pix {
         view->setupMetricsNames(metrics);
         mCurrentMetric = metrics[0];
 
-        // mCalculator = new KMeansCalculator();
-        mCalculator = new GngCalculator();
+        std::vector<Calculator*> calculators;
+        calculators.push_back(new GngCalculator());
+        calculators.push_back(new KMeansCalculator());
+        view->setupCalculatorsNames(calculators);
+        mCalculator = calculators[0];
+        
         mCalculator->setMetric(mCurrentMetric);
     }
 
@@ -69,6 +73,13 @@ namespace pix {
     void MainPresenter::onMetricSelected(Metric* metric) {
         printf("MainPresenter: change metric to: %s\n", metric->name().c_str());
         mCurrentMetric = metric;
+        mCalculator->setMetric(mCurrentMetric);
+        initCalculator();
+    }
+
+    void MainPresenter::onCalculatorSelected(Calculator* calculator) {
+        printf("MainPresenter: change calculator to: %s\n", calculator->name().c_str());
+        mCalculator = calculator;
         mCalculator->setMetric(mCurrentMetric);
     }
 

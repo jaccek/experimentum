@@ -80,6 +80,10 @@ namespace pix {
         mNodes.clear();
     }
 
+    std::string GngCalculator::name() {
+        return "Growing Neural Gas";
+    }
+
     Calculator::State GngCalculator::makeSingleIteration(Calculator::State oldState) {
         // TODO: refactor
         if (mNodes.size() == 0) {
