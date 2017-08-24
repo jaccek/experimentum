@@ -1,6 +1,8 @@
 #include "main_view.hpp"
 #include "main_presenter.hpp"
 
+#include <sstream>
+
 namespace pix {
 
     const char* const CANCEL_TEXT = "Cancel";
@@ -46,6 +48,24 @@ namespace pix {
 
     void MainView::displayOutputImage(mapi::Bitmap &bitmap) {
         mDestinationImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()), Qt::FastTransformation);
+    }
+
+    void MainView::displayOutputColors(std::vector<mapi::Color>& colors) {
+        mColorsContainerView = new QWidget();
+        QLayout *layout = new QVBoxLayout();
+
+        for (auto color : colors) {
+            QWidget* colorWidget = new QLabel();
+            colorWidget->setMinimumWidth(80);
+            colorWidget->resize(80, 25);
+            char styleSheet[128];
+            sprintf(styleSheet, "QLabel { background-color: #%08x; }", color.asUint32());
+            colorWidget->setStyleSheet(styleSheet);
+            layout->addWidget(colorWidget);
+        }
+        mColorsContainerView->setLayout(layout);
+
+        mColorsScrollArea->setWidget(mColorsContainerView);
     }
 
     void MainView::blockAllWidgetsExceptCancelComputation() {
@@ -108,6 +128,11 @@ namespace pix {
         toolsLayout->addLayout(createColorsCountSpinBox());
         toolsLayout->addWidget(createMetricsComboBox());
         toolsLayout->addWidget(createCalculatorsComboBox());
+
+        mColorsScrollArea = new QScrollArea();
+        mColorsContainerView = new QWidget();
+        mColorsScrollArea->setWidget(mColorsContainerView);
+        toolsLayout->addWidget(mColorsScrollArea);
 
         toolsWidget->setLayout(toolsLayout);
         return toolsWidget;

@@ -21,7 +21,7 @@ namespace pix {
         calculators.push_back(new KMeansCalculator());
         view->setupCalculatorsNames(calculators);
         mCalculator = calculators[0];
-        
+
         mCalculator->setMetric(mCurrentMetric);
     }
 
@@ -91,6 +91,7 @@ namespace pix {
 
         updateOutputImage(state);
         mView->displayOutputImage(mOutputImage);
+        mView->displayOutputColors(state.colors);
     }
 
     int MainPresenter::colorsCount() {

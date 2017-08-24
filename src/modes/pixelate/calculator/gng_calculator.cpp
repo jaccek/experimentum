@@ -1,6 +1,7 @@
 #include "gng_calculator.hpp"
 #include <ctime>
 #include <cstdlib>
+#include <unistd.h>
 
 namespace pix {
 
@@ -161,7 +162,7 @@ namespace pix {
         }
 
         // add new node
-        if ((iteration() + 1) % mAddingNodeDelay == 0 && mNodes.size() < (unsigned) centersCount()) {
+        if (((iteration() + 1) % mAddingNodeDelay == 0) && mNodes.size() < (unsigned) centersCount()) {
             // find node with max error
             float maxError = -1.0f;
             Node *errorNode = nullptr;

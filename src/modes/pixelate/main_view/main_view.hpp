@@ -18,6 +18,7 @@ namespace pix {
 
         virtual void displaySourceImage(mapi::Bitmap &bitmap);
         virtual void displayOutputImage(mapi::Bitmap &bitmap);
+        virtual void displayOutputColors(std::vector<mapi::Color>& colors);
 
         virtual void blockAllWidgetsExceptCancelComputation();
         virtual void unlockCalculateButton();
@@ -54,6 +55,8 @@ namespace pix {
         QSpinBox *mColorsCountSpinBox;
         QComboBox *mMetricsComboBox;
         QComboBox *mCalculatorsComboBox;
+        QScrollArea *mColorsScrollArea;
+        QWidget *mColorsContainerView;
 
         QTimer *mTimer = nullptr;
     };

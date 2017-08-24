@@ -18,6 +18,7 @@ namespace pix {
 
             virtual void displaySourceImage(mapi::Bitmap &bitmap) = 0;
             virtual void displayOutputImage(mapi::Bitmap &bitmap) = 0;
+            virtual void displayOutputColors(std::vector<mapi::Color>& colors) = 0;
 
             virtual void blockAllWidgetsExceptCancelComputation() = 0;
             virtual void unlockCalculateButton() = 0;
