@@ -14,9 +14,11 @@ namespace pix {
         void init(QWidget *mainWidget);
 
         virtual void setupMetricsNames(std::vector<Metric*>& metrics);
+        virtual void setupCalculatorsNames(std::vector<Calculator*>& calculators);
 
         virtual void displaySourceImage(mapi::Bitmap &bitmap);
         virtual void displayOutputImage(mapi::Bitmap &bitmap);
+        virtual void displayOutputColors(std::vector<mapi::Color>& colors);
 
         virtual void blockAllWidgetsExceptCancelComputation();
         virtual void unlockCalculateButton();
@@ -30,6 +32,7 @@ namespace pix {
         QWidget* createToolsWidget();
         QLayout* createColorsCountSpinBox();
         QComboBox* createMetricsComboBox();
+        QComboBox* createCalculatorsComboBox();
 
     private slots:
         void loadImageClicked();
@@ -37,9 +40,11 @@ namespace pix {
         void timerTicked();
         void colorsCountChanged(int newValue);
         void metricChanged(int index);
+        void calculatorChanged(int index);
 
     private:
         MainContract::PresenterForView *mPresenter;
+        std::vector<Calculator*> mCalculators;
         std::vector<Metric*> mMetrics;
 
         QWidget *mMainWidget;
@@ -49,6 +54,9 @@ namespace pix {
         QPushButton *mLoadImageButton;
         QSpinBox *mColorsCountSpinBox;
         QComboBox *mMetricsComboBox;
+        QComboBox *mCalculatorsComboBox;
+        QScrollArea *mColorsScrollArea;
+        QWidget *mColorsContainerView;
 
         QTimer *mTimer = nullptr;
     };

@@ -9,6 +9,8 @@ namespace pix {
     public:
         virtual ~KMeansCalculator();
 
+        virtual std::string name();
+
     protected:
         virtual State makeSingleIteration(State oldState);
 

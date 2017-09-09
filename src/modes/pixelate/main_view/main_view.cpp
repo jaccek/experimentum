@@ -1,6 +1,8 @@
 #include "main_view.hpp"
 #include "main_presenter.hpp"
 
+#include <sstream>
+
 namespace pix {
 
     const char* const CANCEL_TEXT = "Cancel";
@@ -32,9 +34,12 @@ namespace pix {
         mainWidget->setLayout(layout);
     }
 
-    void MainView::setupMetricsNames(std::vector<Metric*>& metrics)
-    {
+    void MainView::setupMetricsNames(std::vector<Metric*>& metrics) {
         mMetrics = metrics;
+    }
+
+    void MainView::setupCalculatorsNames(std::vector<Calculator*>& calculators) {
+        mCalculators = calculators;
     }
 
     void MainView::displaySourceImage(mapi::Bitmap &bitmap) {
@@ -45,12 +50,31 @@ namespace pix {
         mDestinationImageView->setPixmap(QPixmap::fromImage(bitmap.asQImage()), Qt::FastTransformation);
     }
 
+    void MainView::displayOutputColors(std::vector<mapi::Color>& colors) {
+        mColorsContainerView = new QWidget();
+        QLayout *layout = new QVBoxLayout();
+
+        for (auto color : colors) {
+            QWidget* colorWidget = new QLabel();
+            colorWidget->setMinimumWidth(80);
+            colorWidget->resize(80, 25);
+            char styleSheet[128];
+            sprintf(styleSheet, "QLabel { background-color: #%08x; }", color.asUint32());
+            colorWidget->setStyleSheet(styleSheet);
+            layout->addWidget(colorWidget);
+        }
+        mColorsContainerView->setLayout(layout);
+
+        mColorsScrollArea->setWidget(mColorsContainerView);
+    }
+
     void MainView::blockAllWidgetsExceptCancelComputation() {
         mLoadImageButton->setEnabled(false);
         mColorsCountSpinBox->setEnabled(false);
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CANCEL_TEXT);
         mMetricsComboBox->setEnabled(false);
+        mCalculatorsComboBox->setEnabled(false);
     }
 
     void MainView::unlockCalculateButton() {
@@ -63,6 +87,7 @@ namespace pix {
         mCalculateButton->setEnabled(true);
         mCalculateButton->setText(CALCULATE_TEXT);
         mMetricsComboBox->setEnabled(true);
+        mCalculatorsComboBox->setEnabled(true);
     }
 
     void MainView::startTimer() {
@@ -101,8 +126,13 @@ namespace pix {
         toolsLayout->addWidget(mCalculateButton);
 
         toolsLayout->addLayout(createColorsCountSpinBox());
-
         toolsLayout->addWidget(createMetricsComboBox());
+        toolsLayout->addWidget(createCalculatorsComboBox());
+
+        mColorsScrollArea = new QScrollArea();
+        mColorsContainerView = new QWidget();
+        mColorsScrollArea->setWidget(mColorsContainerView);
+        toolsLayout->addWidget(mColorsScrollArea);
 
         toolsWidget->setLayout(toolsLayout);
         return toolsWidget;
@@ -141,6 +171,21 @@ namespace pix {
         return mMetricsComboBox;
     }
 
+    QComboBox* MainView::createCalculatorsComboBox() {
+        mCalculatorsComboBox = new QComboBox();
+
+        QStringList names;
+        for (auto calculator : mCalculators) {
+            names << QString(calculator->name().c_str());
+        }
+        mCalculatorsComboBox->insertItems(0, names);
+
+        void (pix::MainView::*slotPointer)(int) = &pix::MainView::calculatorChanged;
+        void(QComboBox::*signalPointer)(int) = &QComboBox::activated;
+        QObject::connect(mCalculatorsComboBox, signalPointer, this, slotPointer);
+        return mCalculatorsComboBox;
+    }
+
     void MainView::loadImageClicked() {
         mPresenter->onLoadButtonClicked();
     }
@@ -159,5 +204,9 @@ namespace pix {
 
     void MainView::metricChanged(int index) {
         mPresenter->onMetricSelected(mMetrics[index]);
+    }
+
+    void MainView::calculatorChanged(int index) {
+        mPresenter->onCalculatorSelected(mCalculators[index]);
     }
 }

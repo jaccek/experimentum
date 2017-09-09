@@ -1,6 +1,8 @@
 #include "mapi/graphics/color.hpp"
 
 #include <QColor>
+#include <QMatrix4x4>
+#include <QVector3D>
 
 namespace mapi {
     Color::Color(uint8_t r, uint8_t g, uint8_t b) : mR(r), mG(g), mB(b) {
@@ -8,6 +10,14 @@ namespace mapi {
         mH = color.hue();
         mS = color.saturationF();
         mV = color.valueF();
+
+        QVector3D vector(mS, 0.0f, 0.0f);
+        QMatrix4x4 rotation;
+        rotation.rotate(mH, 0.0f, 1.0f, 0.0f);
+
+        auto xyv = vector * rotation;
+        mX = xyv.x();
+        mY = xyv.z();
     }
 
     uint8_t Color::r() {
@@ -44,6 +54,14 @@ namespace mapi {
 
     float Color::vf() {
         return mV;
+    }
+
+    float Color::xf() {
+        return mX;
+    }
+
+    float Color::yf() {
+        return mY;
     }
 
     uint32_t Color::asUint32() {

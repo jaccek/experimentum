@@ -1,12 +1,14 @@
 #include "kmeans_calculator.hpp"
 
-#include <ctime>
 #include <cmath>
 #include <limits>
-#include <cstdlib>
 
 namespace pix {
     KMeansCalculator::~KMeansCalculator() {
+    }
+
+    std::string KMeansCalculator::name() {
+        return "k-means";
     }
 
     Calculator::State KMeansCalculator::makeSingleIteration(State oldState) {
@@ -22,7 +24,7 @@ namespace pix {
 
     void KMeansCalculator::resetNewCenters(State &oldState) {
         mNewCenters.clear();
-        for (unsigned i = 0; i < oldState.centers.size(); ++i) {
+        for (unsigned i = 0; i < oldState.colors.size(); ++i) {
             mNewCenters.push_back(nullptr);
         }
     }
@@ -31,8 +33,8 @@ namespace pix {
         unsigned centerIndex = 0;
         float minDistance = std::numeric_limits<float>::max();
 
-        for (unsigned i = 0; i < oldState.centers.size(); ++i) {
-            auto &center = oldState.centers[i];
+        for (unsigned i = 0; i < oldState.colors.size(); ++i) {
+            auto &center = oldState.colors[i];
             float distance = metric()->distance(item.color, center);
             if (distance < minDistance) {
                 minDistance = distance;
@@ -66,10 +68,10 @@ namespace pix {
         State newState;
         for (unsigned i = 0; i < mNewCenters.size(); ++i) {
             if (mNewCenters[i] != nullptr) {
-                newState.centers.push_back(mNewCenters[i]->color);
+                newState.colors.push_back(mNewCenters[i]->color);
                 delete mNewCenters[i];
             } else {
-                newState.centers.push_back(oldState.centers[i]);
+                newState.colors.push_back(oldState.colors[i]);
             }
         }
         return newState;

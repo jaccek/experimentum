@@ -14,6 +14,7 @@ namespace pix {
         virtual void onLoadButtonClicked();
         virtual void onCalculateClicked();
         virtual void onColorsCountChanged(int colorsCount);
+        virtual void onCalculatorSelected(Calculator* calculator);
         virtual void onMetricSelected(Metric* metric);
 
         virtual void onTimerTick();

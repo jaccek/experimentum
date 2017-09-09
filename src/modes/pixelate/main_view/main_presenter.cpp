@@ -1,8 +1,9 @@
 #include "main_presenter.hpp"
 #include "main_router.hpp"
+#include "calculator/gng_calculator.hpp"
 #include "calculator/kmeans_calculator.hpp"
 #include "calculator/metric/euclides_rgb_square_metric.hpp"
-#include "calculator/metric/euclides_hsv_metric.hpp"
+#include "calculator/metric/euclides_hsv_square_metric.hpp"
 #include <map>
 
 namespace pix {
@@ -10,12 +11,17 @@ namespace pix {
         mRouter = new MainRouter();
 
         std::vector<Metric*> metrics;
-        metrics.push_back(new EuclidesHsvMetric());
+        metrics.push_back(new EuclidesHsvSquareMetric());
         metrics.push_back(new EuclidesRgbSquareMetric());
         view->setupMetricsNames(metrics);
         mCurrentMetric = metrics[0];
 
-        mCalculator = new KMeansCalculator();
+        std::vector<Calculator*> calculators;
+        calculators.push_back(new GngCalculator());
+        calculators.push_back(new KMeansCalculator());
+        view->setupCalculatorsNames(calculators);
+        mCalculator = calculators[0];
+
         mCalculator->setMetric(mCurrentMetric);
     }
 
@@ -68,6 +74,13 @@ namespace pix {
         printf("MainPresenter: change metric to: %s\n", metric->name().c_str());
         mCurrentMetric = metric;
         mCalculator->setMetric(mCurrentMetric);
+        initCalculator();
+    }
+
+    void MainPresenter::onCalculatorSelected(Calculator* calculator) {
+        printf("MainPresenter: change calculator to: %s\n", calculator->name().c_str());
+        mCalculator = calculator;
+        mCalculator->setMetric(mCurrentMetric);
     }
 
     void MainPresenter::onTimerTick() {
@@ -78,6 +91,7 @@ namespace pix {
 
         updateOutputImage(state);
         mView->displayOutputImage(mOutputImage);
+        mView->displayOutputColors(state.colors);
     }
 
     int MainPresenter::colorsCount() {
@@ -120,20 +134,24 @@ namespace pix {
     }
 
     void MainPresenter::updateOutputImage(Calculator::State state) {
+        if (state.colors.size() == 0) {
+            return;
+        }
+
         for (int x = 0; x < mOutputImage.width(); ++x) {
             for (int y = 0; y < mOutputImage.height(); ++y) {
                 auto color = mOutputImage.pixel(x, y);
                 int bestIdx = 0;
                 float minDistance = 1000000000.0f;
 
-                for (unsigned i = 0; i < state.centers.size(); ++i) {
-                    float distance = mCurrentMetric->distance(state.centers[i], color);
+                for (unsigned i = 0; i < state.colors.size(); ++i) {
+                    float distance = mCurrentMetric->distance(state.colors[i], color);
                     if (distance < minDistance) {
                         minDistance = distance;
                         bestIdx = i;
                     }
                 }
-                mOutputImage.setPixel(x, y, state.centers[bestIdx]);
+                mOutputImage.setPixel(x, y, state.colors[bestIdx]);
             }
         }
     }
