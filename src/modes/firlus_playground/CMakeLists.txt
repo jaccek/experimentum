@@ -8,6 +8,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{WORKSPACE_DIR}/artifacts/modes/${PROJECT
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set(CMAKE_AUTOMOC ON)
 
+find_package(OpenGL REQUIRED)
+find_package(GLEW REQUIRED)
+
 
 # include directories
 include_directories(
@@ -15,6 +18,8 @@ include_directories(
 	$ENV{WORKSPACE_DIR}/src
 	$ENV{WORKSPACE_DIR}/src/mode_api/include
 	$ENV{WORKSPACE_DIR}/include
+	${GLEW_INCLUDE_DIRS}
+	${OPENGL_INCLUDE_DIRS}
 )
 
 # library directories
@@ -35,4 +40,6 @@ add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 target_link_libraries(${PROJECT_NAME}
 	mode_api
 	firlus
+	${GLEW_LIBRARIES}
+	${OPENGL_LIBRARIES}
 )

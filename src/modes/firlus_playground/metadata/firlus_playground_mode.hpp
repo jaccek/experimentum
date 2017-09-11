@@ -1,8 +1,7 @@
 #pragma once
 
 #include <mapi/mode.hpp>
-#include <mapi/widget/auto_resize_image_widget.hpp>
-#include <QtWidgets>
+#include <QWidget>
 
 namespace fp {
 
