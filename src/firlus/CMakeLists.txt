@@ -13,7 +13,7 @@ find_package(GLEW REQUIRED)
 
 # include directories
 include_directories(
-	.
+	./include
 	$ENV{WORKSPACE_DIR}/include
 	${GLEW_INCLUDE_DIRS}
 	${OPENGL_INCLUDE_DIRS}

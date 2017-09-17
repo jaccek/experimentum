@@ -10,6 +10,8 @@ namespace firlus {
 
         void use();
 
+        unsigned shaderProgram() { return mShaderProgram; } // TODO: temporary
+
     private:
         unsigned createVertexShader(const char *vertexShaderFile);
         unsigned createFragmentShader(const char *fragmentShaderFile);

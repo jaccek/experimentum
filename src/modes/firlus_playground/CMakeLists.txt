@@ -15,7 +15,7 @@ find_package(GLEW REQUIRED)
 # include directories
 include_directories(
 	.
-	$ENV{WORKSPACE_DIR}/src
+	$ENV{WORKSPACE_DIR}/src/firlus/include
 	$ENV{WORKSPACE_DIR}/src/mode_api/include
 	$ENV{WORKSPACE_DIR}/include
 	${GLEW_INCLUDE_DIRS}
@@ -42,4 +42,9 @@ target_link_libraries(${PROJECT_NAME}
 	firlus
 	${GLEW_LIBRARIES}
 	${OPENGL_LIBRARIES}
+)
+
+add_custom_command(
+	TARGET ${PROJECT_NAME} POST_BUILD
+	COMMAND cp -ra ${CMAKE_CURRENT_SOURCE_DIR}/shaders ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}
 )

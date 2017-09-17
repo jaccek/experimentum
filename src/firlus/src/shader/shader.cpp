@@ -1,4 +1,4 @@
-#include "shader.h"
+#include "firlus/shader/shader.h"
 
 #include <fstream>
 #include <sstream>
@@ -10,9 +10,18 @@ namespace firlus {
         unsigned fragmentShader = createFragmentShader(fragmentShaderFile);
 
         createShaderProgram(vertexShader, fragmentShader);
+
+        glDeleteShader(vertexShader);
+        glDeleteShader(fragmentShader);
+    }
+
+    Shader::~Shader() {
+        glUseProgram(0);
+        glDeleteProgram(mShaderProgram);
     }
 
     void Shader::use() {
+        printf("Using shader %d\n", mShaderProgram);
         glUseProgram(mShaderProgram);
     }
 
@@ -27,7 +36,7 @@ namespace firlus {
     }
 
     unsigned Shader::createFragmentShader(const char *fragmentShaderFile) {
-        unsigned fragmentShader = glCreateShader(GL_VERTEX_SHADER);
+        unsigned fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 
         printf("loading fragment shader: %s\n", fragmentShaderFile);
         loadAndCompileShader(fragmentShader, fragmentShaderFile);
@@ -43,7 +52,14 @@ namespace firlus {
         glAttachShader(mShaderProgram, fragmentShader);
         glLinkProgram(mShaderProgram);
 
-        checkShaderError(mShaderProgram, GL_LINK_STATUS);
+        GLint success;
+        glGetProgramiv(mShaderProgram, GL_LINK_STATUS, &success);
+        if (!success) {
+            GLchar infoLog[512] = { 0 };
+            glGetProgramInfoLog(mShaderProgram, 512, NULL, infoLog);
+            printf("program error: %s\n", infoLog);
+            throw success;
+        }
     }
 
     void Shader::loadAndCompileShader(unsigned shader, const char *shaderFile) {
@@ -74,11 +90,11 @@ namespace firlus {
         int success;
         char infoLog[LOG_SIZE];
         glGetShaderiv(shader, thingToCheck, &success);
-        if (!success)
-        {
+        if (!success) {
             glGetShaderInfoLog(shader, LOG_SIZE, NULL, infoLog);
             printf("Shader error:\n%s\n", infoLog);
             throw "Shader error";
         }
+        printf("Shader %d created successfully\n", shader);
     }
 }
