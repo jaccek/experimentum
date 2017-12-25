@@ -111,35 +111,38 @@ namespace pix {
         }
 
         // TODO: refactor
-        // get next input
-        mapi::Color color = mInputs[0];
-        mInputs.erase(mInputs.begin());
+        for (unsigned i = 0; i < mInputs.size(); ++i) {
+            // get next input
+            mapi::Color color = mInputs[0];
+            // mInputs.erase(mInputs.begin());
 
-        // find 2 nearest nodes
-        auto nearestNode = findNearestNodeExcept(color, nullptr);
-        auto secondNearestNode = findNearestNodeExcept(color, nearestNode);
+            // find 2 nearest nodes
+            auto nearestNode = findNearestNodeExcept(color, nullptr);
+            auto secondNearestNode = findNearestNodeExcept(color, nearestNode);
 
-        // update nearest node error
-        nearestNode->error += metric()->distance(nearestNode->color, color);
+            // update nearest node error
+            nearestNode->error += metric()->distance(nearestNode->color, color);
 
-        // move nearest node and it's neighbours to color
-        nearestNode->moveToTarget(color, mNearestNodeMovementWeight);
-        for (auto node : nearestNode->neighbours()) {
-            node->moveToTarget(color, mNearestNodeNeighboursMovementWeight);
+            // move nearest node and it's neighbours to color
+            nearestNode->moveToTarget(color, mNearestNodeMovementWeight);
+            for (auto node : nearestNode->neighbours()) {
+                node->moveToTarget(color, mNearestNodeNeighboursMovementWeight);
+            }
+
+            // increase edges weight (only connected to nearest node)
+            for (auto edge : nearestNode->edges) {
+                edge->age += 1;
+            }
+
+            // reset or create edge between nearest nodes
+            auto edge = nearestNode->edgeToNode(secondNearestNode);
+            if (edge == nullptr) {
+                nearestNode->createEdge(secondNearestNode);
+            } else {
+                edge->age = 0;
+            }
         }
-
-        // increase edges weight (only connected to nearest node)
-        for (auto edge : nearestNode->edges) {
-            edge->age += 1;
-        }
-
-        // reset or create edge between nearest nodes
-        auto edge = nearestNode->edgeToNode(secondNearestNode);
-        if (edge == nullptr) {
-            nearestNode->createEdge(secondNearestNode);
-        } else {
-            edge->age = 0;
-        }
+        mInputs.clear();
 
         // remove too old edges
         for (auto node : mNodes) {
@@ -163,6 +166,7 @@ namespace pix {
 
         // add new node
         if (((iteration() + 1) % mAddingNodeDelay == 0) && mNodes.size() < (unsigned) centersCount()) {
+            mAddingNodeDelay += mNodes.size();
             // find node with max error
             float maxError = -1.0f;
             Node *errorNode = nullptr;

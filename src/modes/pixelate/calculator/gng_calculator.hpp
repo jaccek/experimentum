@@ -57,8 +57,8 @@ namespace pix {
 
         float mNearestNodeMovementWeight = 0.05f;
         float mNearestNodeNeighboursMovementWeight = 0.0006f;
-        int mMaxEdgeAge = 100;
-        int mAddingNodeDelay = 300;
+        int mMaxEdgeAge = 1000;
+        int mAddingNodeDelay = 1;//10;
 
         float mErrorDecreaseFactor = 0.9995f;
         float mErrorDecreaseAfterAddFactor = 0.5f;
