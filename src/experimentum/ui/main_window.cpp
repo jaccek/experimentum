@@ -19,7 +19,7 @@ namespace e {
         mMainWidget->setLayout(mMainWidgetLayout);
         setCentralWidget(mMainWidget);
 
-        changeMode(mModesManager->modes()[0]);
+        changeMode(mModesManager->modes()[1]);
     }
 
     void MainWindow::initMenuBar() {
