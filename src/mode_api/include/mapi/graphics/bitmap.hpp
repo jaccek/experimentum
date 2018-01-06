@@ -11,6 +11,7 @@ namespace mapi {
         Bitmap();
         Bitmap(QImage image);
         Bitmap(std::string fileName);
+        Bitmap(unsigned width, unsigned height, Color color);
 
         int width();
         int height();

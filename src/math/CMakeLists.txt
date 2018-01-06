@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 2.8.12.2)
 
-set(PROJECT_NAME ray_tracing_mode)
+set(PROJECT_NAME math)
 project(${PROJECT_NAME})
 
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY $ENV{WORKSPACE_DIR}/artifacts/modes/${PROJECT_NAME})
@@ -12,8 +12,7 @@ set(CMAKE_AUTOMOC ON)
 # include directories
 include_directories(
 	.
-	$ENV{WORKSPACE_DIR}/src/mode_api/include
-	$ENV{WORKSPACE_DIR}/src/math/include
+	include
 	$ENV{WORKSPACE_DIR}/include
 )
 
@@ -33,6 +32,4 @@ file(GLOB_RECURSE SRC_FILES
 add_library(${PROJECT_NAME} SHARED ${SRC_FILES})
 
 target_link_libraries(${PROJECT_NAME}
-	mode_api
-	math
 )

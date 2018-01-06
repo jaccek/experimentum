@@ -13,6 +13,11 @@ namespace mapi {
         mImage = QImage(fileName.c_str());
     }
 
+    Bitmap::Bitmap(unsigned width, unsigned height, Color color) {
+        mImage = QImage(width, height, QImage::Format_RGB32);
+        mImage.fill(color.asUint32());
+    }
+
     int Bitmap::width() {
         return mImage.width();
     }

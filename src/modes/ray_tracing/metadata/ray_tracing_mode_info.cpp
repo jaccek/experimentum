@@ -1,6 +1,6 @@
 #include "ray_tracing_mode_info.hpp"
 
-namespace fp {
+namespace ray {
     RayTracingModeInfo::RayTracingModeInfo() {
     }
 

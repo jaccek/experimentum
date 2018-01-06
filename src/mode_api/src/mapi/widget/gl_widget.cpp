@@ -1,5 +1,5 @@
 #include <GL/glew.h>
-#include "mapi/widget/gl_widget.h"
+#include "mapi/widget/gl_widget.hpp"
 
 namespace mapi {
 

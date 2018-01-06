@@ -1,7 +1,7 @@
 #include "firlus_playground_mode.hpp"
 
 #include <GL/glew.h>        // TODO: temporary!!!
-#include <mapi/widget/gl_widget.h>
+#include <mapi/widget/gl_widget.hpp>
 #include <QHBoxLayout>
 #include <firlus/shader/shader.h>
 
