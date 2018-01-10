@@ -6,9 +6,11 @@ namespace ray {
 
     Engine::Engine() {
         mCamera = new BaseCamera();
+        mWorld = new World();
     }
 
     Engine::~Engine() {
+        delete mWorld;
         delete mCamera;
     }
 
@@ -19,18 +21,17 @@ namespace ray {
             for (unsigned y = 0; y < height; ++y) {
                 auto ray = mCamera->generateRay(x, y, width, height);
 
-                auto direction = ray.direction();
-                direction.z = 0.0f;
-                direction.normalize();
+                auto intersectInfo = mWorld->castRay(ray);
+                if (intersectInfo.hitsObject) {
+                    auto direction = ray.direction() / 2.0f;
 
-                // printf("color = (%.3f, %.3f, %.3f)\n", direction.x, lookAtY);
-
-                auto color = mapi::Color(
-                    (uint8_t) (255.0f * direction.x),
-                    (uint8_t) (255.0f * direction.y),
-                    (uint8_t) (255.0f * direction.z)
-                );
-                bitmap->setPixel(x, y, color);
+                    auto color = mapi::Color(
+                        (uint8_t) (255.0f * (direction.x + 0.5f)),
+                        (uint8_t) (255.0f * (direction.y + 0.5f)),
+                        (uint8_t) (255.0f * (direction.z + 0.5f))
+                    );
+                    bitmap->setPixel(x, y, color);
+                }
             }
         }
 

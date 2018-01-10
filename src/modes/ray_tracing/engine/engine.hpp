@@ -1,6 +1,7 @@
 #pragma once
 
 #include "engine/camera/camera.hpp"
+#include "engine/world/world.hpp"
 #include <mapi/graphics/bitmap.hpp>
 
 namespace ray {
@@ -14,5 +15,6 @@ namespace ray {
 
     private:
         Camera *mCamera;
+        World *mWorld;
     };
 }

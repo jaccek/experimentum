@@ -7,7 +7,11 @@ namespace ray {
             mDirection(direction) {
     }
 
-    math::Vec3 Ray::direction() {
+    math::Vec3& Ray::direction() {
         return mDirection;
+    }
+
+    math::Vec3& Ray::castingPoint() {
+        return mCastingPoint;
     }
 }

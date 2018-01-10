@@ -1,6 +1,6 @@
 #pragma once
 
-#include "engine/ray.hpp"
+#include "engine/ray/ray.hpp"
 #include <math/vector/vec3.hpp>
 
 namespace ray {

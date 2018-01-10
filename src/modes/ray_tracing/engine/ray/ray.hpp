@@ -8,7 +8,8 @@ namespace ray {
     public:
         Ray(math::Vec3 castingPoint, math::Vec3 direction);
 
-        math::Vec3 direction();
+        math::Vec3& direction();
+        math::Vec3& castingPoint();
 
     private:
         math::Vec3 mCastingPoint;

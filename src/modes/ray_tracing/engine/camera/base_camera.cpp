@@ -7,7 +7,7 @@ namespace ray {
     BaseCamera::BaseCamera(Vec3 position, Vec3 direction):
         mPosition(position),
         mDirection(direction),
-        mMatrixWidth(0.02f),
+        mMatrixWidth(0.1f),
         mFocalLength(0.035f) {
     }
 
@@ -42,11 +42,12 @@ namespace ray {
         float matrixScale = mMatrixWidth / (float) imageWidth;
         //float matrixHeight = imageHeight * matrixScale;
 
+        y = imageHeight - y;
         float lookAtX = (x - imageWidth / 2) * matrixScale;
-        float lookAtY = (imageHeight / 2 - y) * matrixScale;
+        float lookAtY = (y - imageHeight / 2) * matrixScale;
 
         // TODO: this code works only if mDirection == (0, 0, 1)!!!
-        Vec3 rayDirection = mDirection;
+        Vec3 rayDirection = mDirection * mFocalLength;
         rayDirection.x += lookAtX;
         rayDirection.y += lookAtY;
         rayDirection.normalize();
